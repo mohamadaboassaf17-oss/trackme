@@ -1,0 +1,260 @@
+<template>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-brand">
+        <router-link to="/dashboard">
+          <span class="brand-icon">◈</span>
+          TrackMe | تتبع
+        </router-link>
+      </div>
+      <div class="navbar-links">
+        <router-link to="/dashboard">لوحة التحكم</router-link>
+        <router-link to="/attendance">الدوام</router-link>
+        <router-link to="/expenses">المصاريف</router-link>
+        <router-link to="/goals">الأهداف</router-link>
+        <router-link to="/reports">التقارير</router-link>
+        <router-link to="/settings">الإعدادات</router-link>
+      </div>
+      <div class="navbar-actions">
+        <button
+          class="theme-toggle-btn"
+          @click="toggleTheme"
+          :aria-label="theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'"
+          :title="theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'"
+        >
+          {{ theme === 'dark' ? '☀️' : '🌙' }}
+        </button>
+        <span class="navbar-user">{{ authStore.user?.username }}</span>
+        <button class="btn btn-logout" @click="handleLogout">تسجيل الخروج</button>
+      </div>
+    </div>
+  </nav>
+
+    <nav class="bottom-nav">
+      <router-link to="/dashboard" class="bottom-nav-item">
+        <span class="bottom-nav-icon">📊</span>
+        <span class="bottom-nav-label">الرئيسية</span>
+      </router-link>
+      <router-link to="/attendance" class="bottom-nav-item">
+        <span class="bottom-nav-icon">⏰</span>
+        <span class="bottom-nav-label">الدوام</span>
+      </router-link>
+      <router-link to="/expenses" class="bottom-nav-item">
+        <span class="bottom-nav-icon">💸</span>
+        <span class="bottom-nav-label">مصاريف</span>
+      </router-link>
+      <router-link to="/goals" class="bottom-nav-item">
+        <span class="bottom-nav-icon">🎯</span>
+        <span class="bottom-nav-label">أهداف</span>
+      </router-link>
+      <router-link to="/settings" class="bottom-nav-item">
+        <span class="bottom-nav-icon">⚙️</span>
+        <span class="bottom-nav-label">إعدادات</span>
+      </router-link>
+    </nav>
+</template>
+
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+const theme = ref("dark");
+
+function applyTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+}
+
+function toggleTheme() {
+  theme.value = theme.value === "dark" ? "light" : "dark";
+  applyTheme(theme.value);
+  localStorage.setItem("theme", theme.value);
+}
+
+onMounted(() => {
+  const saved = localStorage.getItem("theme") || "dark";
+  theme.value = saved;
+  applyTheme(saved);
+});
+
+function handleLogout() {
+  authStore.logout();
+  router.push("/login");
+}
+</script>
+
+<style scoped>
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: color-mix(in srgb, var(--bg-card) 88%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-inner {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-brand a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+  transition: opacity var(--transition);
+}
+
+.navbar-brand a:hover {
+  opacity: 0.85;
+}
+
+.brand-icon {
+  font-size: 1.4rem;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 4px;
+}
+
+.navbar-links a {
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--transition);
+}
+
+.navbar-links a:hover {
+  color: var(--text-primary);
+  background: var(--accent-light);
+}
+
+.navbar-links a.router-link-active {
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.theme-toggle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  font-size: 1.15rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  padding: 0;
+}
+
+.theme-toggle-btn:hover {
+  transform: rotate(15deg) scale(1.15);
+  border-color: var(--accent);
+}
+
+.navbar-user {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Bottom Navigation (mobile only) */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: none;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all var(--transition);
+  min-width: 56px;
+  min-height: 44px;
+}
+
+.bottom-nav-item:hover,
+.bottom-nav-item.router-link-active {
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+.bottom-nav-icon {
+  font-size: 1.3rem;
+}
+
+.bottom-nav-label {
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    display: none !important;
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+}
+
+@media (min-width: 769px) {
+  .bottom-nav {
+    display: none;
+  }
+
+  .navbar {
+    display: flex;
+  }
+}
+</style>
