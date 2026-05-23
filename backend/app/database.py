@@ -7,18 +7,18 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./trackme.db")
 
-# Render sends postgres:// but SQLAlchemy 2.x requires postgresql://
+# Render يرسل postgres:// لكن SQLAlchemy يحتاج postgresql+psycopg:// لاستخدام psycopg (الإصدار 3)
 if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
 
-# SQLite requires check_same_thread=False; PostgreSQL doesn't accept connect_args
+# SQLite يتطلب check_same_thread=False؛ PostgreSQL لا يحتاج connect_args
 connect_args = {}
 if DATABASE_URL.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
 
 engine = create_engine(
     DATABASE_URL,
-    connect_args=connect_args,
+    connect_args=connect_args if connect_args else None,
     echo=False,
 )
 
