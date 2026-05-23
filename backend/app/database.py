@@ -7,9 +7,12 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./trackme.db")
 
-# تحويل الرابط: Render يرسل postgres://، SQLAlchemy+psycopg يحتاج postgresql+psycopg://
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
+# تعديل ذكي ومضمون للتعامل مع روابط Render بجميع أشكالها
+if DATABASE_URL:
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
+    elif DATABASE_URL.startswith("postgresql://") and "+psycopg" not in DATABASE_URL:
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
 
 # إعدادات إضافية لـ SQLite فقط
 connect_args = {}
