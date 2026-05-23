@@ -37,6 +37,7 @@ def health_check():
     return {"status": "ok", "message": "TrackMe API is running"}
 
 
+# Mount frontend only in local dev (not on Render/Railway/etc)
 frontend_path = os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist")
-if os.path.exists(frontend_path):
+if os.path.exists(frontend_path) and not os.getenv("RENDER"):
     app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
