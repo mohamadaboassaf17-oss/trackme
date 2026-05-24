@@ -111,6 +111,7 @@
 import { ref, computed, watch, onMounted } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import api from "@/utils/api"
+import { safeArray } from "@/utils/helpers"
 
 const authStore = useAuthStore()
 const period = ref("monthly")
@@ -142,7 +143,7 @@ function getPeriodStart() {
 
 const periodAttendance = computed(() => {
   const start = getPeriodStart()
-  return allAttendance.value.filter(
+  return safeArray(allAttendance.value).filter(
     (r) => r.date >= start && r.status === "present"
   )
 })
@@ -230,8 +231,8 @@ async function fetchData() {
     ])
     salaryData.value = salaryRes.data
     expensesData.value = expensesRes.data
-    goals.value = goalsRes.data
-    allAttendance.value = attendanceRes.data
+    goals.value = safeArray(goalsRes.data)
+    allAttendance.value = safeArray(attendanceRes.data)
     lastUpdated.value = new Date().toLocaleTimeString("ar-EG", {
       hour: "2-digit",
       minute: "2-digit",

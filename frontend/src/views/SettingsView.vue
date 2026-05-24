@@ -109,6 +109,7 @@
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import api from "@/utils/api";
+import { safeArray } from "@/utils/helpers";
 
 const authStore = useAuthStore();
 
@@ -163,7 +164,16 @@ async function fetchSalary() {
   salaryError.value = "";
   try {
     const response = await api.get("/salary");
-    salaryData.value = response.data;
+    salaryData.value = response.data || null;
+    if (salaryData.value) {
+      salaryData.value.expected_work_days = salaryData.value.expected_work_days ?? 0;
+      salaryData.value.actual_present_days = salaryData.value.actual_present_days ?? 0;
+      salaryData.value.absent_days = salaryData.value.absent_days ?? 0;
+      salaryData.value.holiday_days = salaryData.value.holiday_days ?? 0;
+      salaryData.value.daily_rate = salaryData.value.daily_rate ?? 0;
+      salaryData.value.earned_salary = salaryData.value.earned_salary ?? 0;
+      salaryData.value.difference = salaryData.value.difference ?? 0;
+    }
   } catch (err) {
     salaryError.value =
       err.response?.data?.detail || "تعذر تحميل ملخص الراتب";

@@ -111,6 +111,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/utils/api'
+import { safeArray } from '@/utils/helpers'
 
 const statusOptions = [
   { value: 'present', label: 'حضر' },
@@ -169,7 +170,7 @@ async function fetchRecords() {
   error.value = ''
   try {
     const { data } = await api.get('/attendance/')
-    records.value = data
+    records.value = safeArray(data)
   } catch (e) {
     error.value = e.response?.data?.detail || 'حدث خطأ أثناء جلب السجلات'
   } finally {

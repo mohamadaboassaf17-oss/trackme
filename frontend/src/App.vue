@@ -53,6 +53,7 @@ onMounted(() => {
   const saved = localStorage.getItem("theme") || "dark";
   theme.value = saved;
   applyTheme(saved);
+  authStore.initFromStorage();
 });
 </script>
 

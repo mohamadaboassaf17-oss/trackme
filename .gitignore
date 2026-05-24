@@ -31,3 +31,7 @@ qa_test.py
 test-results/
 playwright-report/
 tests/screenshots/
+
+# Windows reserved device names
+frontend/nul
+nul

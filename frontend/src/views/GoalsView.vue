@@ -162,6 +162,7 @@
 
 <script>
 import api from "@/utils/api";
+import { safeArray } from "@/utils/helpers";
 
 export default {
   name: "GoalsView",
@@ -201,7 +202,7 @@ export default {
           api.get("/salary"),
           api.get("/expenses/summary", { params: { period: "monthly" } }),
         ]);
-        this.goals = goalsRes.data;
+        this.goals = safeArray(goalsRes.data);
         this.earnedSalary = salaryRes.data.earned_salary || 0;
         this.totalExpenses = expensesRes.data.total_amount || 0;
       } catch (err) {

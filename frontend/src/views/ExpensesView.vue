@@ -123,6 +123,7 @@
 
 <script>
 import api from "@/utils/api";
+import { safeArray } from "@/utils/helpers";
 
 const DEFAULT_CATEGORIES = ["طعام", "إيجار", "مواصلات", "ترفيه", "صحة", "أخرى"];
 
@@ -205,7 +206,7 @@ export default {
       this.loading = true;
       try {
         const res = await api.get("/expenses/");
-        this.expenses = res.data;
+        this.expenses = safeArray(res.data);
       } catch (err) {
         this.error = err.response?.data?.detail || "حدث خطأ أثناء تحميل المصاريف";
       } finally {
@@ -217,7 +218,9 @@ export default {
         const res = await api.get("/expenses/summary", {
           params: { period: this.summaryPeriod },
         });
-        this.summary = res.data;
+        const data = res.data || {};
+        if (!data.by_category) data.by_category = {};
+        this.summary = data;
       } catch {
         this.summary = null;
       }

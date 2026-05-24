@@ -119,6 +119,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue"
 import api from "@/utils/api"
+import { safeArray } from "@/utils/helpers"
 
 const period = ref("monthly")
 const loading = ref(true)
@@ -234,7 +235,7 @@ async function fetchData() {
     ])
     salaryData.value = salaryRes.data
     expensesData.value = expensesRes.data
-    goals.value = goalsRes.data
+    goals.value = safeArray(goalsRes.data)
   } catch (e) {
     error.value = "حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى."
   } finally {
