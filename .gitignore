@@ -28,3 +28,6 @@ Thumbs.db
 # Test files
 test_render.py
 qa_test.py
+test-results/
+playwright-report/
+tests/screenshots/

@@ -134,6 +134,7 @@ npm run dev -- --host
 | الواجهة الخلفية | Python 3 + FastAPI |
 | قاعدة البيانات | SQLite (محلية — لا تحتاج خادم) |
 | المصادقة | JWT + bcrypt |
+| النشر | Render (Web Service + Static Site + PostgreSQL) |
 | اللغة | العربية (RTL) |
 
 ---
@@ -143,6 +144,46 @@ npm run dev -- --host
 - **التسجيل:** كل مستخدم ينشئ حسابه الخاص برقم سري
 - **العزل:** كل مستخدم يرى بياناته فقط — لا مشاركة بين المستخدمين
 - **الإعدادات:** راتب شهري أو أسبوعي + وقت دوام افتراضي
+
+---
+
+## 🌐 النشر على الإنترنت (Render)
+
+التطبيق منشور على **Render** (الخطة المجانية) ويمكن الوصول إليه من أي مكان:
+
+| الخدمة | الرابط | الحالة |
+|--------|--------|--------|
+| **الواجهة الأمامية** | [trackme-ugq1.onrender.com](https://trackme-ugq1.onrender.com) | 🟢 يعمل |
+| **الـ API الخلفي** | [trackme-backend-xena.onrender.com](https://trackme-backend-xena.onrender.com) | 🟢 يعمل |
+| **توثيق API** | [trackme-backend-xena.onrender.com/api/docs](https://trackme-backend-xena.onrender.com/api/docs) | 🟢 Swagger |
+
+### التقنيات السحابية
+- **Backend**: FastAPI + Uvicorn على Render Web Service
+- **Frontend**: Vue.js 3 + Vite على Render Static Site
+- **قاعدة البيانات**: PostgreSQL على Render (خطة مجانية)
+- **المصادقة**: JWT + bcrypt
+
+### ⚠️ ملاحظات الخطة المجانية
+- Render يوقف الخدمة بعد 15 دقيقة من عدم الاستخدام
+- أول طلب قد يستغرق 30-60 ثانية لاستيقاظ الخادم
+- قاعدة البيانات: 1GB مجاناً، تنتهي بعد 90 يوم (تحتاج تجديد)
+
+### الاختبارات الآلية (Playwright)
+التطبيق يحتوي على اختبارات E2E و API باستخدام Playwright:
+
+```bash
+# تثبيت Playwright
+npm install
+
+# تشغيل اختبارات API (الـ Backend)
+npx playwright test --project=api
+
+# تشغيل اختبارات E2E (الواجهة الأمامية)
+npx playwright test --project=e2e
+
+# تشغيل جميع الاختبارات
+npx playwright test
+```
 
 ---
 
