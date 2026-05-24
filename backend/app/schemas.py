@@ -151,3 +151,29 @@ class GoalResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     model_config = {"from_attributes": True}
+
+
+class WealthCreate(BaseModel):
+    date: date
+    source: str
+    amount: float
+    note: Optional[str] = None
+
+
+class WealthUpdate(BaseModel):
+    date: Optional[date] = None
+    source: Optional[str] = None
+    amount: Optional[float] = None
+    note: Optional[str] = None
+
+
+class WealthResponse(BaseModel):
+    id: int
+    user_id: int
+    date: date
+    source: str
+    amount: float
+    note: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    model_config = {"from_attributes": True}

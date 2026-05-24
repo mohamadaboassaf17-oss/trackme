@@ -85,6 +85,16 @@ def update_attendance(
     for key, value in update_data.items():
         setattr(record, key, value)
 
+    # Auto-calculate hours_worked when both start_time and end_time are present
+    if record.start_time and record.end_time:
+        from datetime import datetime, time, timedelta
+        start_dt = datetime.combine(record.date, record.start_time)
+        end_dt = datetime.combine(record.date, record.end_time)
+        if end_dt < start_dt:
+            end_dt += timedelta(days=1)
+        diff = (end_dt - start_dt).total_seconds() / 3600
+        record.hours_worked = round(diff, 1)
+
     db.commit()
     db.refresh(record)
     return record

@@ -56,3 +56,16 @@ class Goal(Base):
     saved_amount = Column(Float, default=0.0)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class Wealth(Base):
+    __tablename__ = "wealth"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    date = Column(Date, nullable=False)
+    source = Column(String(100), nullable=False)
+    amount = Column(Float, nullable=False)
+    note = Column(String(255), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

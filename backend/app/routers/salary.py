@@ -69,7 +69,7 @@ def get_salary(
         .all()
     )
 
-    actual_present_days = sum(1 for r in records if r.status == "present")
+    actual_present_days = sum(1 for r in records if r.status == "present" and r.start_time is not None)
     absent_days = sum(1 for r in records if r.status == "absent")
     holiday_days = sum(1 for r in records if r.status == "holiday")
 
