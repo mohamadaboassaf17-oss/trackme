@@ -86,16 +86,16 @@
           <div class="summary-divider"></div>
           <div class="summary-row">
             <span class="summary-label">الراتب اليومي</span>
-            <span class="summary-value">${{ salaryData.daily_rate.toFixed(2) }}</span>
+            <span class="summary-value">${{ (salaryData.daily_rate ?? 0).toFixed(2) }}</span>
           </div>
           <div class="summary-row earned-row">
             <span class="summary-label">الراتب المستحق</span>
-            <span class="summary-value earned">${{ salaryData.earned_salary.toFixed(2) }}</span>
+            <span class="summary-value earned">${{ (salaryData.earned_salary ?? 0).toFixed(2) }}</span>
           </div>
           <div class="summary-row">
             <span class="summary-label">الفرق</span>
             <span class="summary-value" :class="{ negative: salaryData.difference > 0 }">
-              ${{ salaryData.difference.toFixed(2) }}
+              ${{ (salaryData.difference ?? 0).toFixed(2) }}
             </span>
           </div>
         </div>

@@ -65,7 +65,7 @@
           <div v-if="summary" class="summary-body">
             <div class="summary-total">
               <span>إجمالي المصاريف:</span>
-              <span class="amount-danger">${{ summary.total_amount.toFixed(2) }}</span>
+              <span class="amount-danger">${{ (summary.total_amount ?? 0).toFixed(2) }}</span>
             </div>
             <div class="summary-breakdown" v-if="Object.keys(summary.by_category).length">
               <div
@@ -74,7 +74,7 @@
                 class="breakdown-item"
               >
                 <span class="badge" :style="{ backgroundColor: categoryColor(cat) }">{{ cat }}</span>
-                <span class="amount-danger">${{ amount.toFixed(2) }}</span>
+                <span class="amount-danger">${{ (amount ?? 0).toFixed(2) }}</span>
               </div>
             </div>
             <div v-else class="no-data">لا توجد مصاريف في هذه الفترة</div>
@@ -97,7 +97,7 @@
                 <p v-if="expense.note" class="expense-note">{{ expense.note }}</p>
               </div>
               <div class="expense-actions">
-                <span class="amount-danger">${{ expense.amount.toFixed(2) }}</span>
+                <span class="amount-danger">${{ (expense.amount ?? 0).toFixed(2) }}</span>
                 <button class="btn-link" @click="editExpense(expense)">تعديل</button>
                 <button class="btn-link btn-delete" @click="confirmDelete(expense)">حذف</button>
               </div>

@@ -8,6 +8,7 @@ import re
 class UserCreate(BaseModel):
     username: str
     password: str
+    email: Optional[str] = None
     salary_type: Optional[str] = "monthly"
     salary_amount: Optional[float] = 0.0
 

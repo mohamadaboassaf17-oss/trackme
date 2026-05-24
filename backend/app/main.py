@@ -2,16 +2,25 @@ import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.database import engine, Base
 from app.routers import auth, attendance, salary, expenses, goals, settings, wealth
+from app.utils.limiter import limiter
 
 Base.metadata.create_all(bind=engine)
-
-limiter = Limiter(key_func=get_remote_address)
+try:
+    from sqlalchemy import inspect, text as sql_text
+    inspector = inspect(engine)
+    existing_columns = [c["name"] for c in inspector.get_columns("users")]
+    if "email" not in existing_columns:
+        with engine.connect() as conn:
+            conn.execute(sql_text("ALTER TABLE users ADD COLUMN email VARCHAR(255) UNIQUE"))
+            conn.commit()
+            print("Added missing email column to users table")
+except Exception as e:
+    print(f"Migration note: {e}")
 
 app = FastAPI(
     title="TrackMe API",
