@@ -67,7 +67,7 @@
               <span>إجمالي المصاريف:</span>
               <span class="amount-danger">${{ (summary.total_amount ?? 0).toFixed(2) }}</span>
             </div>
-            <div class="summary-breakdown" v-if="Object.keys(summary.by_category).length">
+            <div class="summary-breakdown" v-if="summary.by_category && Object.keys(summary.by_category).length">
               <div
                 v-for="(amount, cat) in summary.by_category"
                 :key="cat"

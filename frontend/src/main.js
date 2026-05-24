@@ -6,6 +6,10 @@ import "./assets/style.css";
 
 const app = createApp(App);
 
+app.config.errorHandler = (err, instance, info) => {
+  console.warn("Vue Error Handler:", err?.toString?.()?.slice(0, 200), info);
+};
+
 app.use(createPinia());
 app.use(router);
 

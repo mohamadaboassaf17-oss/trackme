@@ -1,5 +1,7 @@
 from playwright.sync_api import sync_playwright
-import json, os, time, random, string
+import json, os, time, random, string, sys
+
+sys.stdout.reconfigure(encoding='utf-8', errors='replace')  # type: ignore
 
 FRONTEND = "https://trackme-ugq1.onrender.com"
 BACKEND = "https://trackme-backend-xena.onrender.com"
