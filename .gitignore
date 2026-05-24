@@ -1,8 +1,8 @@
 # Dependencies
 node_modules/
 
-# Build output
-frontend/dist/
+# Build output (committed for Render deployment stability, uncomment for local dev)
+# frontend/dist/
 
 # Python
 __pycache__/

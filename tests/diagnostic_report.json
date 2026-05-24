@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-05-24T16:21:07.883Z",
+  "frontend": "https://trackme-ugq1.onrender.com",
+  "backend": "https://trackme-backend-xena.onrender.com/api",
+  "api_calls": [],
+  "network_errors": [
+    {
+      "url": "https://trackme-ugq1.onrender.com/login",
+      "status": 404,
+      "method": "GET"
+    }
+  ],
+  "console_messages": [
+    "[error] Failed to load resource: the server responded with a status of 404 ()"
+  ],
+  "page_errors": [],
+  "issues": [
+    "Found 1 failed network requests (0 from backend API)",
+    "Login form not found or not visible"
+  ],
+  "ui_elements": {
+    "inputs": 0,
+    "buttons": 0,
+    "selects": 0,
+    "login_form_visible": false
+  }
+}

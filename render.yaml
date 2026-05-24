@@ -14,9 +14,13 @@ services:
 
   - type: web
     name: trackme-frontend
-    env: node
-    buildCommand: "cd frontend && npm install && npm run build"
+    env: static
+    buildCommand: echo "Using pre-built frontend/dist from repository"
     staticPublishPath: frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
 
 databases:
   - name: trackme-db
