@@ -3,6 +3,7 @@
     <Navbar v-if="authStore.isAuthenticated" />
     <main class="main-content" :class="{ 'with-navbar': authStore.isAuthenticated }">
       <router-view />
+      <ToastNotification ref="toast" />
     </main>
     <button
       class="theme-toggle-global"
@@ -16,12 +17,27 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, provide, getCurrentInstance } from "vue";
 import { useAuthStore } from "./stores/auth";
 import Navbar from "./components/Navbar.vue";
+import ToastNotification from "./components/ToastNotification.vue";
 
 const authStore = useAuthStore();
 const theme = ref("dark");
+const toastRef = ref(null);
+
+const toast = {
+  show: (message, type = "success", duration = 3000) => {
+    toastRef.value?.show(message, type, duration);
+  },
+};
+
+provide("$toast", toast);
+
+const instance = getCurrentInstance();
+if (instance?.appContext) {
+  instance.appContext.config.globalProperties.$toast = toast;
+}
 
 function applyTheme(t) {
   document.documentElement.setAttribute("data-theme", t);

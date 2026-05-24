@@ -185,6 +185,14 @@ npx playwright test --project=e2e
 npx playwright test
 ```
 
+## 🔔 إبقاء التطبيق مستيقظاً (UptimeRobot)
+
+Render المجاني يوقف الـ Backend بعد 15 دقيقة خمول.
+الحل: سجّل في [uptimerobot.com](https://uptimerobot.com) وأضف monitor:
+- **URL:** https://trackme-backend-xena.onrender.com/health
+- **Interval:** كل 5 دقائق
+- مجاني تماماً ولا يحتاج بطاقة اتمان
+
 ---
 
 ## 🤔 الأسئلة الشائعة

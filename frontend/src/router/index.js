@@ -12,7 +12,7 @@ const routes = [
     path: "/login",
     name: "Login",
     component: LoginView,
-    meta: { guest: true },
+    meta: { requiresGuest: true },
   },
   {
     path: "/dashboard",
@@ -56,7 +56,8 @@ const routes = [
   },
   {
     path: "/:pathMatch(.*)*",
-    redirect: "/dashboard",
+    name: "NotFound",
+    component: () => import("../views/NotFoundView.vue"),
   },
 ];
 
@@ -69,7 +70,7 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");
   if (to.meta.requiresAuth && !token) {
     next("/login");
-  } else if (to.meta.guest && token) {
+  } else if (to.name === "Login" && token) {
     next("/dashboard");
   } else {
     next();

@@ -217,4 +217,23 @@ async function handleRegister() {
   text-align: center;
   font-size: 0.9rem;
 }
+
+.error-msg {
+  background: rgba(239,68,68,0.1);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.success-msg {
+  background: rgba(16,185,129,0.1);
+  color: var(--success);
+  border: 1px solid var(--success);
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
 </style>
