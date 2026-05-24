@@ -1,7 +1,8 @@
 from datetime import date, time, datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
+import re
 
 
 class UserCreate(BaseModel):
@@ -9,6 +10,29 @@ class UserCreate(BaseModel):
     password: str
     salary_type: Optional[str] = "monthly"
     salary_amount: Optional[float] = 0.0
+
+    @field_validator('username')
+    @classmethod
+    def validate_username(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) < 3 or len(v) > 50:
+            raise ValueError('اسم المستخدم يجب أن يكون بين 3 و 50 حرفاً')
+        if not re.match(r'^[a-zA-Z0-9_\u0600-\u06FF]+$', v):
+            raise ValueError('اسم المستخدم يحتوي على رموز غير مسموح بها')
+        if re.search(r'[<>&"\']', v):
+            raise ValueError('اسم المستخدم يحتوي على رموز غير مسموح بها')
+        return v
+
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError('كلمة المرور يجب أن تكون 8 أحرف على الأقل')
+        if not any(c.isupper() for c in v):
+            raise ValueError('يجب أن تحتوي على حرف كبير واحد على الأقل')
+        if not any(c.isdigit() for c in v):
+            raise ValueError('يجب أن تحتوي على رقم واحد على الأقل')
+        return v
 
 
 class UserLogin(BaseModel):
@@ -65,9 +89,17 @@ class AttendanceResponse(BaseModel):
 
 class ExpenseCreate(BaseModel):
     date: date
-    amount: float
-    category: str
-    note: Optional[str] = None
+    amount: float = Field(gt=0, description="يجب أن يكون أكبر من صفر")
+    category: str = Field(min_length=1, max_length=50)
+    note: Optional[str] = Field(default=None, max_length=500)
+
+    @field_validator('note', 'category')
+    @classmethod
+    def sanitize_text(cls, v: str) -> str:
+        if v is None:
+            return v
+        v = re.sub(r'<[^>]+>', '', v)
+        return v.strip()
 
 
 class ExpenseUpdate(BaseModel):

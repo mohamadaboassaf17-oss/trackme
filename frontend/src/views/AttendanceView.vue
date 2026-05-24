@@ -149,7 +149,7 @@ const computedHours = computed(() => {
   const [eh, em] = form.value.end_time.split(':').map(Number)
   let diff = (eh * 60 + em) - (sh * 60 + sm)
   if (diff < 0) diff += 24 * 60
-  return (diff / 60).toFixed(1)
+  return ((diff / 60) ?? 0).toFixed(1)
 })
 
 function todayString() {
@@ -161,7 +161,7 @@ function calcHours(start, end) {
   const [eh, em] = end.split(':').map(Number)
   let diff = (eh * 60 + em) - (sh * 60 + sm)
   if (diff < 0) diff += 24 * 60
-  return parseFloat((diff / 60).toFixed(1))
+  return parseFloat(((diff / 60) ?? 0).toFixed(1))
 }
 
 async function fetchRecords() {
@@ -313,7 +313,7 @@ function fmtTime(timeStr) {
 
 function fmtHours(hours) {
   if (hours == null) return '0.0'
-  return Number(hours).toFixed(1)
+  return (Number(hours) ?? 0).toFixed(1)
 }
 
 onMounted(async () => {
@@ -529,4 +529,24 @@ onMounted(async () => {
     margin-top: 8px;
   }
 }
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+  gap: 12px;
+}
+
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>

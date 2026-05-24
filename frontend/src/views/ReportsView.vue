@@ -81,7 +81,7 @@
                 ></span>
                 <span class="legend-name">{{ entry.name }}</span>
                 <span class="legend-value">
-                  ${{ entry.amount.toFixed(2) }} ({{ entry.percent }}%)
+                  ${{ (entry.amount ?? 0).toFixed(2) }} ({{ entry.percent }}%)
                 </span>
               </div>
             </div>
@@ -95,8 +95,8 @@
             <div class="goal-info">
               <span class="goal-name">{{ goal.name }}</span>
               <span class="goal-amounts">
-                ${{ goal.saved_amount.toFixed(2) }} /
-                ${{ goal.target_amount.toFixed(2) }}
+                ${{ (goal.saved_amount ?? 0).toFixed(2) }} /
+                ${{ (goal.target_amount ?? 0).toFixed(2) }}
               </span>
             </div>
             <div class="goal-bar-row">
@@ -523,4 +523,24 @@ onMounted(() => {
     font-size: 0.85rem;
   }
 }
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+  gap: 12px;
+}
+
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>

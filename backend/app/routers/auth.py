@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.database import get_db
 from app.models import User
@@ -14,6 +16,7 @@ from app.utils.auth import (
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 security = HTTPBearer()
+limiter = Limiter(key_func=get_remote_address)
 
 
 def get_current_user(
@@ -52,7 +55,8 @@ def require_role(role: str):
 @router.post(
     "/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED
 )
-def register(user_data: UserCreate, db: Session = Depends(get_db)):
+@limiter.limit("3/minute")
+def register(request: Request, user_data: UserCreate, db: Session = Depends(get_db)):
     existing = db.query(User).filter(User.username == user_data.username).first()
     if existing:
         raise HTTPException(
@@ -72,7 +76,8 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=Token)
-def login(user_data: UserLogin, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+def login(request: Request, user_data: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.username == user_data.username).first()
     if not db_user or not verify_password(user_data.password, db_user.password_hash):
         raise HTTPException(

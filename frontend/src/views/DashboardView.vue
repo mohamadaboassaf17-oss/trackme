@@ -72,8 +72,8 @@
             ></div>
           </div>
           <div class="goal-amounts">
-            ${{ goal.saved_amount.toFixed(2) }} /
-            ${{ goal.target_amount.toFixed(2) }}
+            ${{ (goal.saved_amount ?? 0).toFixed(2) }} /
+            ${{ (goal.target_amount ?? 0).toFixed(2) }}
           </div>
         </div>
         <router-link to="/goals" class="card-link">عرض كل الأهداف &larr;</router-link>
@@ -152,7 +152,7 @@ const totalHours = computed(() => {
     (s, r) => s + (r.hours_worked || 0),
     0
   )
-  return sum.toFixed(1)
+  return (sum ?? 0).toFixed(1)
 })
 
 const presentDays = computed(() => periodAttendance.value.length)
@@ -168,7 +168,7 @@ const totalExpenses = computed(() => {
 const netAmount = computed(() => {
   const salary = salaryData.value?.earned_salary || 0
   const expenses = expensesData.value?.total_amount || 0
-  return (salary - expenses).toFixed(2)
+  return ((salary - expenses) ?? 0).toFixed(2)
 })
 
 const netValueClass = computed(() => {
@@ -427,4 +427,24 @@ onMounted(() => {
     max-width: 100%;
   }
 }
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+  gap: 12px;
+}
+
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>

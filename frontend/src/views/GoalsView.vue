@@ -8,16 +8,16 @@
     <div class="summary-cards">
       <div class="card summary-card">
         <div class="card-label">الراتب المكتسب</div>
-        <div class="card-value number-fade-in">${{ earnedSalary.toFixed(2) }}</div>
+        <div class="card-value number-fade-in">${{ (earnedSalary ?? 0).toFixed(2) }}</div>
       </div>
       <div class="card summary-card">
         <div class="card-label">إجمالي المصاريف</div>
-        <div class="card-value number-fade-in">${{ totalExpenses.toFixed(2) }}</div>
+        <div class="card-value number-fade-in">${{ (totalExpenses ?? 0).toFixed(2) }}</div>
       </div>
       <div class="card summary-card" :class="{ 'net-negative': availableForSaving < 0 }">
         <div class="card-label">المتاح للادخار</div>
         <div class="card-value number-fade-in" :class="availableForSaving >= 0 ? 'text-success' : 'text-danger'">
-          ${{ availableForSaving.toFixed(2) }}
+          ${{ (availableForSaving ?? 0).toFixed(2) }}
         </div>
         <div v-if="availableForSaving < 0" class="card-meta" style="color: var(--danger);">تجاوزت الميزانية</div>
       </div>
@@ -107,11 +107,11 @@
         <div class="goal-details">
           <div class="goal-detail">
             <span class="label">المبلغ المستهدف:</span>
-            <span class="value">${{ goal.target_amount.toFixed(2) }}</span>
+            <span class="value">${{ (goal.target_amount ?? 0).toFixed(2) }}</span>
           </div>
           <div class="goal-detail">
             <span class="label">المبلغ المدخر:</span>
-            <span class="value">${{ goal.saved_amount.toFixed(2) }}</span>
+            <span class="value">${{ (goal.saved_amount ?? 0).toFixed(2) }}</span>
           </div>
           <div class="goal-detail">
             <span class="label">تاريخ الاستحقاق:</span>
@@ -471,4 +471,24 @@ export default {
   margin-bottom: 8px;
   padding-bottom: 0;
 }
+
+.loading-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+  gap: 12px;
+}
+
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
