@@ -1,58 +1,51 @@
 import { createRouter, createWebHistory } from "vue-router";
-import LoginView from "@/views/LoginView.vue";
-import DashboardView from "@/views/DashboardView.vue";
-import AttendanceView from "@/views/AttendanceView.vue";
-import ExpensesView from "@/views/ExpensesView.vue";
-import GoalsView from "@/views/GoalsView.vue";
-import ReportsView from "@/views/ReportsView.vue";
-import SettingsView from "@/views/SettingsView.vue";
 
 const routes = [
   {
+    path: "/",
+    redirect: "/dashboard",
+  },
+  {
     path: "/login",
     name: "Login",
-    component: LoginView,
+    component: () => import("../views/LoginView.vue"),
     meta: { requiresGuest: true },
   },
   {
     path: "/dashboard",
     name: "Dashboard",
-    component: DashboardView,
+    component: () => import("../views/DashboardView.vue"),
     meta: { requiresAuth: true },
   },
   {
     path: "/attendance",
     name: "Attendance",
-    component: AttendanceView,
+    component: () => import("../views/AttendanceView.vue"),
     meta: { requiresAuth: true },
   },
   {
     path: "/expenses",
     name: "Expenses",
-    component: ExpensesView,
+    component: () => import("../views/ExpensesView.vue"),
     meta: { requiresAuth: true },
   },
   {
     path: "/goals",
     name: "Goals",
-    component: GoalsView,
+    component: () => import("../views/GoalsView.vue"),
     meta: { requiresAuth: true },
   },
   {
     path: "/reports",
     name: "Reports",
-    component: ReportsView,
+    component: () => import("../views/ReportsView.vue"),
     meta: { requiresAuth: true },
   },
   {
     path: "/settings",
     name: "Settings",
-    component: SettingsView,
+    component: () => import("../views/SettingsView.vue"),
     meta: { requiresAuth: true },
-  },
-  {
-    path: "/",
-    redirect: "/dashboard",
   },
   {
     path: "/:pathMatch(.*)*",

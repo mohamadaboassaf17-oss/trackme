@@ -14,11 +14,30 @@
         </div>
         <div class="form-group">
           <label for="password">كلمة المرور</label>
-          <input id="password" v-model="password" type="password" required placeholder="أدخل كلمة المرور" />
+          <div class="input-wrapper">
+            <input
+              id="password"
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              required
+              placeholder="أدخل كلمة المرور"
+              @input="validatePassword"
+            />
+            <button
+              type="button"
+              @click="showPassword = !showPassword"
+              class="toggle-password-btn"
+              :title="showPassword ? 'إخفاء' : 'إظهار'"
+            >
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+          <small v-if="passwordError" class="field-error">{{ passwordError }}</small>
         </div>
         <p v-if="error" class="error-msg">{{ error }}</p>
-        <button type="submit" class="btn btn-primary btn-login" :disabled="loading">
-          {{ loading ? "جاري الدخول..." : "دخول" }}
+        <button type="submit" class="btn btn-primary btn-login btn-full" :disabled="loading || !!passwordError">
+          <span v-if="loading" class="btn-spinner"></span>
+          <span>{{ loading ? "جاري الدخول..." : "دخول" }}</span>
         </button>
       </form>
 
@@ -40,7 +59,22 @@
           </div>
           <div class="form-group">
             <label for="reg-password">كلمة المرور</label>
-            <input id="reg-password" v-model="regPassword" type="password" required placeholder="اختر كلمة مرور" />
+            <div class="input-wrapper">
+              <input
+                id="reg-password"
+                v-model="regPassword"
+                :type="showRegPassword ? 'text' : 'password'"
+                required
+                placeholder="اختر كلمة مرور"
+              />
+              <button
+                type="button"
+                @click="showRegPassword = !showRegPassword"
+                class="toggle-password-btn"
+              >
+                {{ showRegPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
           </div>
           <div class="form-group">
             <label for="salary-type">نوع الراتب</label>
@@ -84,6 +118,18 @@ const regSalaryType = ref("monthly");
 const regSalaryAmount = ref(0);
 const regError = ref("");
 const regLoading = ref(false);
+
+const showPassword = ref(false);
+const showRegPassword = ref(false);
+const passwordError = ref("");
+
+function validatePassword() {
+  if (password.value.length > 0 && password.value.length < 8) {
+    passwordError.value = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+  } else {
+    passwordError.value = '';
+  }
+}
 
 async function handleLogin() {
   error.value = "";
@@ -217,6 +263,38 @@ async function handleRegister() {
   text-align: center;
   font-size: 0.9rem;
 }
+
+.input-wrapper { position: relative; }
+.toggle-password-btn {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px;
+}
+.field-error {
+  color: var(--danger);
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: block;
+}
+.btn-full { width: 100%; }
+.btn-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .error-msg {
   background: rgba(239,68,68,0.1);
