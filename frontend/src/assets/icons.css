@@ -1,0 +1,288 @@
+/* === TrackMe Icon System — Pure CSS + Unicode === */
+/* Each icon is drawn with CSS borders, transforms, and box-shadows */
+
+/* Brand diamond */
+.brand-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #6366F1, #C5943A);
+  transform: rotate(45deg);
+  border-radius: 3px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.login-view .brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 5px;
+}
+
+/* Theme toggle — Sun */
+.theme-icon-sun {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #F59E0B;
+  box-shadow: 0 0 0 3px var(--bg-card, #1a1a2e), 0 0 0 5px #F59E0B;
+  flex-shrink: 0;
+}
+
+/* Theme toggle — Moon */
+.theme-icon-moon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #818CF8;
+  box-shadow: inset -4px -2px 0 2px var(--bg-card, #1a1a2e);
+  flex-shrink: 0;
+}
+
+/* Bottom nav icons - shared base */
+.bottom-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Dashboard — 4-square grid drawn with backgrounds */
+.nav-icon-dashboard {
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor);
+  background-size: 7px 7px;
+  background-position: 3px 3px, 14px 3px, 3px 14px, 14px 14px;
+  background-repeat: no-repeat;
+}
+
+/* Clock */
+.nav-icon-clock {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+.nav-icon-clock::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 6px;
+  background: currentColor;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+.nav-icon-clock::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 5px;
+  background: currentColor;
+  top: 50%;
+  right: 3px;
+  transform: rotate(90deg);
+  border-radius: 1px;
+}
+
+/* Money */
+.nav-icon-money {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+.nav-icon-money::after {
+  content: '$';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+}
+
+/* Target / Crosshair */
+.nav-icon-target {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+.nav-icon-target::before {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.nav-icon-target::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Settings / Gear */
+.nav-icon-settings {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  box-shadow:
+    0 -8px 0 -4px currentColor,
+    0 8px 0 -4px currentColor,
+    -8px 0 0 -4px currentColor,
+    8px 0 0 -4px currentColor;
+  flex-shrink: 0;
+  margin: 8px;
+}
+
+/* Eye icon for password toggle */
+.password-eye {
+  display: inline-block;
+  width: 22px;
+  height: 15px;
+  border: 2px solid currentColor;
+  border-radius: 50% / 60%;
+  position: relative;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.password-eye::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: currentColor;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.password-eye-off {
+  display: inline-block;
+  width: 22px;
+  height: 15px;
+  border: 2px solid currentColor;
+  border-radius: 50% / 60%;
+  position: relative;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.password-eye-off::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 24px;
+  background: currentColor;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 1px;
+}
+
+/* Toast icons — clean Unicode */
+.toast-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Chart header icon replacements */
+.chart-icon-bar {
+  display: inline-block;
+  width: 14px;
+  height: 12px;
+  vertical-align: middle;
+  margin-inline-end: 4px;
+  border-left: 4px solid currentColor;
+  border-right: 4px solid currentColor;
+  background: linear-gradient(
+    to right,
+    currentColor 33%,
+    transparent 33%,
+    transparent 66%,
+    currentColor 66%
+  );
+  background-size: 100% 3px;
+  background-repeat: no-repeat;
+  background-position: 0 0, 0 5px, 0 9px;
+}
+
+.chart-icon-donut {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-inline-end: 4px;
+  position: relative;
+}
+.chart-icon-donut::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-top-color: transparent;
+  border-left-color: transparent;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.chart-icon-target {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-inline-end: 4px;
+  position: relative;
+}
+.chart-icon-target::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

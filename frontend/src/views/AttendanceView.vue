@@ -13,7 +13,7 @@
 
         <div class="quick-log-section">
           <button class="quick-log-btn" @click="quickLog" :disabled="quickLogLoading">
-            {{ quickLogLoading ? 'جاري التسجيل...' : '🚀 تسجيل يوم بالوقت الافتراضي' }}
+            {{ quickLogLoading ? 'جاري التسجيل...' : 'تسجيل يوم بالوقت الافتراضي' }}
           </button>
           <transition name="quick-msg-fade">
             <div v-if="quickLogMessage" :class="['quick-log-msg', 'quick-log-msg--' + quickLogMessage.type]">
@@ -213,7 +213,7 @@ async function quickLog() {
 
     quickLogMessage.value = {
       type: 'success',
-      text: '✅ تم تسجيل يوم عمل بنجاح'
+          text: 'تم تسجيل يوم عمل بنجاح'
     }
 
     if (quickLogTimer) clearTimeout(quickLogTimer)

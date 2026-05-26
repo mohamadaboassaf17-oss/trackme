@@ -15,7 +15,7 @@ export default {
       visible: false,
       message: '',
       type: 'success',
-      icons: { success: '✓', error: '✕', warning: '⚠️', info: 'ℹ️' },
+      icons: { success: '\u2713', error: '\u2717', warning: '\u26A0', info: '\u2139' },
       timer: null
     }
   },

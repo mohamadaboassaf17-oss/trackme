@@ -28,7 +28,7 @@
 
     <template v-if="!loading && !error">
       <div class="card chart-card">
-        <h3>📊 الدخل مقابل المصاريف</h3>
+        <h3><span class="chart-icon-bar" aria-hidden="true"></span>الدخل مقابل المصاريف</h3>
         <div class="bar-chart">
           <div class="bar-row">
             <span class="bar-label">الدخل</span>
@@ -55,7 +55,7 @@
 
       <div class="charts-grid">
         <div class="card chart-card">
-          <h3>🍩 المصاريف حسب الفئة</h3>
+          <h3><span class="chart-icon-donut" aria-hidden="true"></span>المصاريف حسب الفئة</h3>
           <div v-if="!categoryEntries.length" class="empty-state">
             لا توجد مصاريف في هذه الفترة
           </div>
@@ -89,7 +89,7 @@
         </div>
 
         <div class="card chart-card">
-          <h3>🎯 تقدم الأهداف</h3>
+          <h3><span class="chart-icon-target" aria-hidden="true"></span>تقدم الأهداف</h3>
           <div v-if="!goals.length" class="empty-state">لا توجد أهداف</div>
           <div v-for="goal in goals" :key="goal.id" class="goal-row">
             <div class="goal-info">

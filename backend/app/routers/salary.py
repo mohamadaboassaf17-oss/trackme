@@ -12,10 +12,11 @@ router = APIRouter(prefix="/api", tags=["salary"])
 
 
 def _count_weekdays(start: date, end: date) -> int:
+    """Count work days: Monday through Saturday (Sunday is off)."""
     count = 0
     current = start
     while current <= end:
-        if current.weekday() < 5:
+        if current.weekday() != 6:  # 0=Mon ... 6=Sun → all days except Sunday
             count += 1
         current += timedelta(days=1)
     return count

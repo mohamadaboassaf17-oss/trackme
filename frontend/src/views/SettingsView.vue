@@ -203,7 +203,7 @@ async function saveShiftDefaults() {
     });
     defaultStartTime.value = response.data.default_start_time || "";
     defaultEndTime.value = response.data.default_end_time || "";
-    shiftSaveSuccess.value = "تم الحفظ ✓";
+    shiftSaveSuccess.value = "تم الحفظ";
   } catch (err) {
     shiftSaveError.value =
       err.response?.data?.detail || "حدث خطأ أثناء حفظ إعدادات وقت الدوام";

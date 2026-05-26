@@ -160,137 +160,139 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from "vue";
 import api from "@/utils/api";
 import { safeArray } from "@/utils/helpers";
 
-export default {
-  name: "GoalsView",
-  data() {
-    return {
-      goals: [],
-      earnedSalary: 0,
-      totalExpenses: 0,
-      loading: false,
-      saving: false,
-      formError: "",
-      editingGoal: null,
-      showDeleteConfirm: false,
-      deleteTarget: null,
-      form: {
-        name: "",
-        target_amount: 0,
-        due_date: "",
-        saved_amount: 0,
-      },
-    };
-  },
-  computed: {
-    availableForSaving() {
-      return this.earnedSalary - this.totalExpenses;
-    },
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      this.loading = true;
-      try {
-        const [goalsRes, salaryRes, expensesRes] = await Promise.all([
-          api.get("/goals/"),
-          api.get("/salary"),
-          api.get("/expenses/summary", { params: { period: "monthly" } }),
-        ]);
-        this.goals = safeArray(goalsRes.data);
-        this.earnedSalary = salaryRes.data.earned_salary || 0;
-        this.totalExpenses = expensesRes.data.total_amount || 0;
-      } catch (err) {
-        console.error("فشل في تحميل البيانات", err);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async handleSubmit() {
-      this.saving = true;
-      this.formError = "";
-      try {
-        if (this.editingGoal) {
-          await api.put(`/goals/${this.editingGoal.id}`, this.form);
-        } else {
-          await api.post("/goals/", this.form);
-        }
-        this.resetForm();
-        await this.fetchData();
-      } catch (err) {
-        this.formError =
-          err.response?.data?.detail || "فشل في حفظ الهدف";
-      } finally {
-        this.saving = false;
-      }
-    },
-    editGoal(goal) {
-      this.editingGoal = goal;
-      this.form = {
-        name: goal.name,
-        target_amount: goal.target_amount,
-        due_date: goal.due_date,
-        saved_amount: goal.saved_amount,
-      };
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    },
-    cancelEdit() {
-      this.resetForm();
-    },
-    resetForm() {
-      this.editingGoal = null;
-      this.form = {
-        name: "",
-        target_amount: 0,
-        due_date: "",
-        saved_amount: 0,
-      };
-      this.formError = "";
-    },
-    confirmDelete(goal) {
-      this.deleteTarget = goal;
-      this.showDeleteConfirm = true;
-    },
-    async deleteGoal() {
-      if (!this.deleteTarget) return;
-      try {
-        await api.delete(`/goals/${this.deleteTarget.id}`);
-        this.showDeleteConfirm = false;
-        this.deleteTarget = null;
-        if (this.editingGoal?.id === this.deleteTarget?.id) {
-          this.resetForm();
-        }
-        await this.fetchData();
-      } catch (err) {
-        console.error("فشل في حذف الهدف", err);
-      }
-    },
-    goalProgress(goal) {
-      if (goal.target_amount <= 0) return 0;
-      return Math.round((goal.saved_amount / goal.target_amount) * 100);
-    },
-    progressColorClass(goal) {
-      const pct = this.goalProgress(goal);
-      if (pct > 50) return "progress-green";
-      if (pct > 25) return "progress-orange";
-      return "progress-red";
-    },
-    formatDate(dateStr) {
-      if (!dateStr) return "";
-      const d = new Date(dateStr);
-      return d.toLocaleDateString("ar-EG", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    },
-  },
-};
+const goals = ref([]);
+const earnedSalary = ref(0);
+const totalExpenses = ref(0);
+const loading = ref(false);
+const saving = ref(false);
+const formError = ref("");
+const editingGoal = ref(null);
+const showDeleteConfirm = ref(false);
+const deleteTarget = ref(null);
+const form = ref({
+  name: "",
+  target_amount: 0,
+  due_date: "",
+  saved_amount: 0,
+});
+
+const availableForSaving = computed(() => {
+  return earnedSalary.value - totalExpenses.value;
+});
+
+async function fetchData() {
+  loading.value = true;
+  try {
+    const [goalsRes, salaryRes, expensesRes] = await Promise.all([
+      api.get("/goals/"),
+      api.get("/salary"),
+      api.get("/expenses/summary", { params: { period: "monthly" } }),
+    ]);
+    goals.value = safeArray(goalsRes.data);
+    earnedSalary.value = salaryRes.data.earned_salary || 0;
+    totalExpenses.value = expensesRes.data.total_amount || 0;
+  } catch (err) {
+    console.error("فشل في تحميل البيانات", err);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function handleSubmit() {
+  saving.value = true;
+  formError.value = "";
+  try {
+    if (editingGoal.value) {
+      await api.put(`/goals/${editingGoal.value.id}`, form.value);
+    } else {
+      await api.post("/goals/", form.value);
+    }
+    resetForm();
+    await fetchData();
+  } catch (err) {
+    formError.value =
+      err.response?.data?.detail || "فشل في حفظ الهدف";
+  } finally {
+    saving.value = false;
+  }
+}
+
+function editGoal(goal) {
+  editingGoal.value = goal;
+  form.value = {
+    name: goal.name,
+    target_amount: goal.target_amount,
+    due_date: goal.due_date,
+    saved_amount: goal.saved_amount,
+  };
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function cancelEdit() {
+  resetForm();
+}
+
+function resetForm() {
+  editingGoal.value = null;
+  form.value = {
+    name: "",
+    target_amount: 0,
+    due_date: "",
+    saved_amount: 0,
+  };
+  formError.value = "";
+}
+
+function confirmDelete(goal) {
+  deleteTarget.value = goal;
+  showDeleteConfirm.value = true;
+}
+
+async function deleteGoal() {
+  if (!deleteTarget.value) return;
+  try {
+    await api.delete(`/goals/${deleteTarget.value.id}`);
+    showDeleteConfirm.value = false;
+    deleteTarget.value = null;
+    if (editingGoal.value?.id === deleteTarget.value?.id) {
+      resetForm();
+    }
+    await fetchData();
+  } catch (err) {
+    console.error("فشل في حذف الهدف", err);
+  }
+}
+
+function goalProgress(goal) {
+  if (goal.target_amount <= 0) return 0;
+  return Math.round((goal.saved_amount / goal.target_amount) * 100);
+}
+
+function progressColorClass(goal) {
+  const pct = goalProgress(goal);
+  if (pct > 50) return "progress-green";
+  if (pct > 25) return "progress-orange";
+  return "progress-red";
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("ar-EG", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+onMounted(() => {
+  fetchData();
+});
 </script>
 
 <style scoped>

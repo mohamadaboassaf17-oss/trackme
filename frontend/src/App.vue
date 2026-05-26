@@ -1,8 +1,12 @@
 <template>
-  <div id="app-root">
+  <div id="app-root" class="arabesque-bg">
     <Navbar v-if="authStore.isAuthenticated" />
     <main class="main-content" :class="{ 'with-navbar': authStore.isAuthenticated }">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <keep-alive :include="keepAliveViews">
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
       <ToastNotification ref="toast" />
     </main>
     <button
@@ -11,7 +15,8 @@
       :aria-label="theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'"
       :title="theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'"
     >
-      {{ theme === 'dark' ? '☀️' : '🌙' }}
+      <span v-if="theme === 'dark'" class="theme-icon-sun" aria-hidden="true"></span>
+      <span v-else class="theme-icon-moon" aria-hidden="true"></span>
     </button>
   </div>
 </template>
@@ -24,6 +29,7 @@ import ToastNotification from "./components/ToastNotification.vue";
 
 const authStore = useAuthStore();
 const theme = ref("dark");
+const keepAliveViews = ['Dashboard', 'Attendance', 'Expenses', 'Goals', 'Reports', 'Settings'];
 const toastRef = ref(null);
 
 const toast = {
@@ -83,7 +89,7 @@ onMounted(() => {
 
 .theme-toggle-global:hover {
   transform: rotate(15deg) scale(1.1);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(99, 102, 241, 0.15);
 }
 
 @media (min-width: 769px) {

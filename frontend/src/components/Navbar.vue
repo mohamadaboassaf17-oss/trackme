@@ -3,7 +3,7 @@
     <div class="navbar-inner">
       <div class="navbar-brand">
         <router-link to="/dashboard">
-          <span class="brand-icon">◈</span>
+          <span class="brand-icon" aria-hidden="true"></span>
           TrackMe | تتبع
         </router-link>
       </div>
@@ -22,7 +22,8 @@
           :aria-label="theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'"
           :title="theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'"
         >
-          {{ theme === 'dark' ? '☀️' : '🌙' }}
+          <span v-if="theme === 'dark'" class="theme-icon-sun" aria-hidden="true"></span>
+          <span v-else class="theme-icon-moon" aria-hidden="true"></span>
         </button>
         <span class="navbar-user">{{ authStore.user?.username }}</span>
         <button class="btn btn-logout" @click="handleLogout">تسجيل الخروج</button>
@@ -32,23 +33,23 @@
 
     <nav class="bottom-nav">
       <router-link to="/dashboard" class="bottom-nav-item">
-        <span class="bottom-nav-icon">📊</span>
+        <span class="bottom-nav-icon nav-icon-dashboard" aria-hidden="true"></span>
         <span class="bottom-nav-label">الرئيسية</span>
       </router-link>
       <router-link to="/attendance" class="bottom-nav-item">
-        <span class="bottom-nav-icon">⏰</span>
+        <span class="bottom-nav-icon nav-icon-clock" aria-hidden="true"></span>
         <span class="bottom-nav-label">الدوام</span>
       </router-link>
       <router-link to="/expenses" class="bottom-nav-item">
-        <span class="bottom-nav-icon">💸</span>
+        <span class="bottom-nav-icon nav-icon-money" aria-hidden="true"></span>
         <span class="bottom-nav-label">مصاريف</span>
       </router-link>
       <router-link to="/goals" class="bottom-nav-item">
-        <span class="bottom-nav-icon">🎯</span>
+        <span class="bottom-nav-icon nav-icon-target" aria-hidden="true"></span>
         <span class="bottom-nav-label">أهداف</span>
       </router-link>
       <router-link to="/settings" class="bottom-nav-item">
-        <span class="bottom-nav-icon">⚙️</span>
+        <span class="bottom-nav-icon nav-icon-settings" aria-hidden="true"></span>
         <span class="bottom-nav-label">إعدادات</span>
       </router-link>
     </nav>
@@ -231,7 +232,6 @@ function handleLogout() {
 }
 
 .bottom-nav-icon {
-  font-size: 1.3rem;
 }
 
 .bottom-nav-label {

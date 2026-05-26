@@ -121,7 +121,8 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from "vue";
 import api from "@/utils/api";
 import { safeArray } from "@/utils/helpers";
 
@@ -136,172 +137,175 @@ const CATEGORY_COLORS = {
   أخرى: "#6b7280",
 };
 
-export default {
-  name: "ExpensesView",
-  data() {
-    return {
-      expenses: [],
-      summary: null,
-      summaryPeriod: "monthly",
-      form: {
-        date: new Date().toISOString().slice(0, 10),
-        amount: "",
-        category: "",
-        note: "",
-      },
-      defaultCategories: DEFAULT_CATEGORIES,
-      showCustomCategory: false,
-      customCategoryName: "",
-      isEditing: false,
-      editingId: null,
-      loading: false,
-      saving: false,
-      error: "",
-      showDeleteConfirm: false,
-      deleteTarget: null,
-      deleting: false,
-    };
-  },
-  mounted() {
-    this.loadExpenses();
-    this.loadSummary();
-  },
-  methods: {
-    formatDate(dateStr) {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString("ar-SA", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    },
-    categoryColor(cat) {
-      return CATEGORY_COLORS[cat] || this.hashColor(cat);
-    },
-    hashColor(str) {
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      const h = Math.abs(hash) % 360;
-      return `hsl(${h}, 55%, 50%)`;
-    },
-    onCategoryChange() {
-      this.showCustomCategory = this.form.category === "__custom__";
-    },
-    resetForm() {
-      this.form = {
-        date: new Date().toISOString().slice(0, 10),
-        amount: "",
-        category: "",
-        note: "",
-      };
-      this.showCustomCategory = false;
-      this.customCategoryName = "";
-      this.isEditing = false;
-      this.editingId = null;
-      this.error = "";
-    },
-    async loadExpenses() {
-      this.loading = true;
-      try {
-        const res = await api.get("/expenses/");
-        this.expenses = safeArray(res.data);
-      } catch (err) {
-        this.error = err.response?.data?.detail || "حدث خطأ أثناء تحميل المصاريف";
-      } finally {
-        this.loading = false;
-      }
-    },
-    async loadSummary() {
-      try {
-        const res = await api.get("/expenses/summary", {
-          params: { period: this.summaryPeriod },
-        });
-        const data = res.data || {};
-        if (!data.by_category) data.by_category = {};
-        this.summary = data;
-      } catch {
-        this.summary = null;
-      }
-    },
-    async handleSubmit() {
-      this.error = "";
+const expenses = ref([]);
+const summary = ref(null);
+const summaryPeriod = ref("monthly");
+const form = ref({
+  date: new Date().toISOString().slice(0, 10),
+  amount: "",
+  category: "",
+  note: "",
+});
+const defaultCategories = ref([...DEFAULT_CATEGORIES]);
+const showCustomCategory = ref(false);
+const customCategoryName = ref("");
+const isEditing = ref(false);
+const editingId = ref(null);
+const loading = ref(false);
+const saving = ref(false);
+const error = ref("");
+const showDeleteConfirm = ref(false);
+const deleteTarget = ref(null);
+const deleting = ref(false);
 
-      let category = this.form.category;
-      if (category === "__custom__") {
-        category = this.customCategoryName.trim();
-        if (!category) {
-          this.error = "الرجاء إدخال اسم الفئة الجديدة";
-          return;
-        }
-      }
-      if (!category) {
-        this.error = "الرجاء اختيار الفئة";
-        return;
-      }
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("ar-SA", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 
-      const payload = {
-        date: this.form.date,
-        amount: parseFloat(this.form.amount),
-        category,
-        note: this.form.note || null,
-      };
+function hashColor(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const h = Math.abs(hash) % 360;
+  return `hsl(${h}, 55%, 50%)`;
+}
 
-      this.saving = true;
-      try {
-        if (this.isEditing) {
-          await api.put(`/expenses/${this.editingId}`, payload);
-        } else {
-          await api.post("/expenses/", payload);
-        }
+function categoryColor(cat) {
+  return CATEGORY_COLORS[cat] || hashColor(cat);
+}
 
-        if (category !== "__custom__" && !this.defaultCategories.includes(category)) {
-          this.defaultCategories.push(category);
-        }
+function onCategoryChange() {
+  showCustomCategory.value = form.value.category === "__custom__";
+}
 
-        this.resetForm();
-        await this.loadExpenses();
-        await this.loadSummary();
-      } catch (err) {
-        this.error = err.response?.data?.detail || "حدث خطأ أثناء حفظ المصروف";
-      } finally {
-        this.saving = false;
-      }
-    },
-    editExpense(expense) {
-      this.isEditing = true;
-      this.editingId = expense.id;
-      this.form.date = expense.date;
-      this.form.amount = expense.amount.toString();
-      this.form.category = expense.category;
-      this.form.note = expense.note || "";
-      this.showCustomCategory = false;
-      this.error = "";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    },
-    confirmDelete(expense) {
-      this.deleteTarget = expense;
-      this.showDeleteConfirm = true;
-    },
-    async handleDelete() {
-      if (!this.deleteTarget) return;
-      this.deleting = true;
-      try {
-        await api.delete(`/expenses/${this.deleteTarget.id}`);
-        this.showDeleteConfirm = false;
-        this.deleteTarget = null;
-        await this.loadExpenses();
-        await this.loadSummary();
-      } catch (err) {
-        this.error = err.response?.data?.detail || "حدث خطأ أثناء حذف المصروف";
-        this.showDeleteConfirm = false;
-      } finally {
-        this.deleting = false;
-      }
-    },
-  },
-};
+function resetForm() {
+  form.value = {
+    date: new Date().toISOString().slice(0, 10),
+    amount: "",
+    category: "",
+    note: "",
+  };
+  showCustomCategory.value = false;
+  customCategoryName.value = "";
+  isEditing.value = false;
+  editingId.value = null;
+  error.value = "";
+}
+
+async function loadExpenses() {
+  loading.value = true;
+  try {
+    const res = await api.get("/expenses/");
+    expenses.value = safeArray(res.data);
+  } catch (err) {
+    error.value = err.response?.data?.detail || "حدث خطأ أثناء تحميل المصاريف";
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function loadSummary() {
+  try {
+    const res = await api.get("/expenses/summary", {
+      params: { period: summaryPeriod.value },
+    });
+    const data = res.data || {};
+    if (!data.by_category) data.by_category = {};
+    summary.value = data;
+  } catch {
+    summary.value = null;
+  }
+}
+
+async function handleSubmit() {
+  error.value = "";
+
+  let category = form.value.category;
+  if (category === "__custom__") {
+    category = customCategoryName.value.trim();
+    if (!category) {
+      error.value = "الرجاء إدخال اسم الفئة الجديدة";
+      return;
+    }
+  }
+  if (!category) {
+    error.value = "الرجاء اختيار الفئة";
+    return;
+  }
+
+  const payload = {
+    date: form.value.date,
+    amount: parseFloat(form.value.amount),
+    category,
+    note: form.value.note || null,
+  };
+
+  saving.value = true;
+  try {
+    if (isEditing.value) {
+      await api.put(`/expenses/${editingId.value}`, payload);
+    } else {
+      await api.post("/expenses/", payload);
+    }
+
+    if (category !== "__custom__" && !defaultCategories.value.includes(category)) {
+      defaultCategories.value.push(category);
+    }
+
+    resetForm();
+    await loadExpenses();
+    await loadSummary();
+  } catch (err) {
+    error.value = err.response?.data?.detail || "حدث خطأ أثناء حفظ المصروف";
+  } finally {
+    saving.value = false;
+  }
+}
+
+function editExpense(expense) {
+  isEditing.value = true;
+  editingId.value = expense.id;
+  form.value.date = expense.date;
+  form.value.amount = expense.amount.toString();
+  form.value.category = expense.category;
+  form.value.note = expense.note || "";
+  showCustomCategory.value = false;
+  error.value = "";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function confirmDelete(expense) {
+  deleteTarget.value = expense;
+  showDeleteConfirm.value = true;
+}
+
+async function handleDelete() {
+  if (!deleteTarget.value) return;
+  deleting.value = true;
+  try {
+    await api.delete(`/expenses/${deleteTarget.value.id}`);
+    showDeleteConfirm.value = false;
+    deleteTarget.value = null;
+    await loadExpenses();
+    await loadSummary();
+  } catch (err) {
+    error.value = err.response?.data?.detail || "حدث خطأ أثناء حذف المصروف";
+    showDeleteConfirm.value = false;
+  } finally {
+    deleting.value = false;
+  }
+}
+
+onMounted(() => {
+  loadExpenses();
+  loadSummary();
+});
 </script>
 
 <style scoped>

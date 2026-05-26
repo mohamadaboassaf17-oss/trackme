@@ -41,6 +41,8 @@ def run_test():
         page = browser.new_page(viewport={"width": 1440, "height": 900})
         page.console_logs = []
         page.on("console", lambda msg: page.console_logs.append(msg))
+        page.on("pageerror", lambda err: print(f"  PAGE ERROR: {err}"))
+        page.on("requestfailed", lambda req: print(f"  FAILED REQUEST: {req.url} ({req.failure})"))
 
         USER = random_user()
         PASS = "Test1234!"

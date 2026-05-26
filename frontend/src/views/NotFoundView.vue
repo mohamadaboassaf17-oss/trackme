@@ -5,7 +5,7 @@
       <h2>الصفحة غير موجودة</h2>
       <p>الرابط الذي تبحث عنه غير موجود أو تم نقله</p>
       <router-link to="/dashboard" class="btn-primary">
-        🏠 العودة للرئيسية
+        العودة للرئيسية
       </router-link>
     </div>
   </div>

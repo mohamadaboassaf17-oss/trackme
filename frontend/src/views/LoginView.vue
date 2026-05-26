@@ -2,7 +2,7 @@
   <div class="login-view">
     <div class="login-card">
       <div class="login-brand">
-        <span class="brand-icon">◈</span>
+        <span class="brand-icon" aria-hidden="true"></span>
         <h1>TrackMe | تتبع</h1>
         <p class="subtitle">نظام تتبع الحضور والمصاريف</p>
       </div>
@@ -29,7 +29,8 @@
               class="toggle-password-btn"
               :title="showPassword ? 'إخفاء' : 'إظهار'"
             >
-              {{ showPassword ? '🙈' : '👁️' }}
+              <span v-if="showPassword" class="password-eye-off" aria-hidden="true"></span>
+              <span v-else class="password-eye" aria-hidden="true"></span>
             </button>
           </div>
           <small v-if="passwordError" class="field-error">{{ passwordError }}</small>
@@ -72,7 +73,8 @@
                 @click="showRegPassword = !showRegPassword"
                 class="toggle-password-btn"
               >
-                {{ showRegPassword ? '🙈' : '👁️' }}
+                <span v-if="showRegPassword" class="password-eye-off" aria-hidden="true"></span>
+                <span v-else class="password-eye" aria-hidden="true"></span>
               </button>
             </div>
           </div>

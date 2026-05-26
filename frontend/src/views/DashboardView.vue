@@ -27,26 +27,26 @@
 
     <div class="summary-cards summary-grid">
       <div class="card summary-card">
-        <div class="card-label">⏰ ساعات العمل</div>
+        <div class="card-label">ساعات العمل</div>
         <div class="card-value number-fade-in">{{ totalHours }}</div>
         <div class="card-meta">من {{ presentDays }} يوم عمل</div>
       </div>
       <div class="card summary-card">
-        <div class="card-label">💰 الراتب المستحق</div>
+        <div class="card-label">الراتب المستحق</div>
         <div class="card-value number-fade-in">${{ earnedSalary }}</div>
         <div class="card-meta">
           {{ salaryData?.actual_present_days || 0 }} أيام حضور
         </div>
       </div>
       <div class="card summary-card">
-        <div class="card-label">💸 المصاريف</div>
+        <div class="card-label">المصاريف</div>
         <div class="card-value number-fade-in">${{ totalExpenses }}</div>
         <div class="card-meta">
           {{ expensesData?.count || 0 }} معاملة
         </div>
       </div>
       <div class="card summary-card" :class="netSummaryClass">
-        <div class="card-label">🏦 الصافي</div>
+        <div class="card-label">الصافي</div>
         <div class="card-value number-fade-in" :class="netValueClass">${{ netAmount }}</div>
         <div class="card-meta">{{ netLabel }}</div>
       </div>
@@ -59,7 +59,7 @@
     <div class="dashboard-grid">
       <div class="card">
         <h3>الأهداف النشطة</h3>
-        <div v-if="!goals.length" class="empty-state">🎯 لا توجد أهداف</div>
+        <div v-if="!goals.length" class="empty-state">لا توجد أهداف</div>
         <div v-for="goal in topGoals" :key="goal.id" class="goal-item">
           <div class="goal-header">
             <span>{{ goal.name }}</span>
@@ -81,7 +81,7 @@
 
       <div class="card">
         <h3>آخر سجلات الدوام</h3>
-        <div v-if="!allAttendance.length" class="empty-state">📋 لا توجد سجلات دوام</div>
+        <div v-if="!allAttendance.length" class="empty-state">لا توجد سجلات دوام</div>
         <div
           v-for="record in lastFiveAttendance"
           :key="record.id"
