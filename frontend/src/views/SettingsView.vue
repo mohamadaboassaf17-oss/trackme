@@ -253,7 +253,7 @@ h2 {
 }
 
 .summary-row:hover {
-  background: rgba(99, 102, 241, 0.03);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
   margin: 0 -8px;
   padding-left: 8px;
   padding-right: 8px;
@@ -281,7 +281,7 @@ h2 {
 }
 
 .summary-value.holiday {
-  color: var(--warning);
+  color: var(--holiday);
 }
 
 .earned-row {
@@ -305,7 +305,7 @@ h2 {
 }
 
 .error-msg {
-  background: rgba(239,68,68,0.1);
+  background: var(--danger-light);
   color: var(--danger);
   border: 1px solid var(--danger);
   padding: 12px 16px;
@@ -314,7 +314,7 @@ h2 {
   font-weight: 500;
 }
 .success-msg {
-  background: rgba(16,185,129,0.1);
+  background: var(--success-light);
   color: var(--success);
   border: 1px solid var(--success);
   padding: 12px 16px;

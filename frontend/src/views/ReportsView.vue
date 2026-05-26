@@ -130,25 +130,25 @@ const expensesData = ref(null)
 const goals = ref([])
 
 const categoryColors = {
-  طعام: "#FF6384",
-  إيجار: "#36A2EB",
-  مواصلات: "#FFCE56",
-  ترفيه: "#4BC0C0",
-  صحة: "#9966FF",
-  أخرى: "#C9CBCF",
+  طعام: "#D97706",
+  إيجار: "#0D9488",
+  مواصلات: "#0EA5E9",
+  ترفيه: "#8B5CF6",
+  صحة: "#059669",
+  أخرى: "#78716C",
 }
 
 const extraColors = [
-  "#FF9F40",
-  "#8B5CF6",
-  "#EC4899",
-  "#10B981",
+  "#C5943A",
   "#F59E0B",
+  "#EC4899",
   "#3B82F6",
-  "#EF4444",
   "#14B8A6",
-  "#F97316",
+  "#FF9F40",
+  "#EF4444",
   "#6366F1",
+  "#F97316",
+  "#10B981",
 ]
 
 function getCategoryColor(category, index) {
@@ -196,7 +196,7 @@ const categoryEntries = computed(() => {
 
 const conicGradient = computed(() => {
   const entries = categoryEntries.value
-  if (!entries.length) return "conic-gradient(#e2e8f0 0deg 360deg)"
+  if (!entries.length) return "conic-gradient(var(--border) 0deg 360deg)"
 
   let currentDeg = 0
   const total = expensesData.value?.total_amount || 1
@@ -282,7 +282,7 @@ onMounted(() => {
 .toggle-btn.active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: white;
 }
 
 .chart-card {
@@ -330,11 +330,11 @@ onMounted(() => {
 }
 
 .bar-income {
-  background: linear-gradient(135deg, var(--success), #34D399);
+  background: linear-gradient(135deg, var(--success), color-mix(in srgb, var(--success) 75%, white));
 }
 
 .bar-expense {
-  background: linear-gradient(135deg, var(--danger), #F87171);
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger) 75%, white));
 }
 
 .bar-value {
@@ -432,7 +432,7 @@ onMounted(() => {
 }
 
 .goal-row:hover {
-  background: rgba(99, 102, 241, 0.03);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
   margin: 0 -8px;
   padding-left: 8px;
   padding-right: 8px;
@@ -546,7 +546,7 @@ onMounted(() => {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .error-msg {
-  background: rgba(239,68,68,0.1);
+  background: var(--danger-light);
   color: var(--danger);
   border: 1px solid var(--danger);
   padding: 12px 16px;
@@ -555,7 +555,7 @@ onMounted(() => {
   font-weight: 500;
 }
 .success-msg {
-  background: rgba(16,185,129,0.1);
+  background: var(--success-light);
   color: var(--success);
   border: 1px solid var(--success);
   padding: 12px 16px;

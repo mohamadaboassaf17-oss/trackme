@@ -26,26 +26,26 @@
     <div v-if="error" class="error-msg">{{ error }}</div>
 
     <div class="summary-cards summary-grid">
-      <div class="card summary-card">
+      <div class="card summary-card card-gold-hover">
         <div class="card-label">ساعات العمل</div>
         <div class="card-value number-fade-in">{{ totalHours }}</div>
         <div class="card-meta">من {{ presentDays }} يوم عمل</div>
       </div>
-      <div class="card summary-card">
+      <div class="card summary-card card-gold-hover">
         <div class="card-label">الراتب المستحق</div>
         <div class="card-value number-fade-in">${{ earnedSalary }}</div>
         <div class="card-meta">
           {{ salaryData?.actual_present_days || 0 }} أيام حضور
         </div>
       </div>
-      <div class="card summary-card">
+      <div class="card summary-card card-gold-hover">
         <div class="card-label">المصاريف</div>
         <div class="card-value number-fade-in">${{ totalExpenses }}</div>
         <div class="card-meta">
           {{ expensesData?.count || 0 }} معاملة
         </div>
       </div>
-      <div class="card summary-card" :class="netSummaryClass">
+      <div class="card summary-card card-gold-hover" :class="netSummaryClass">
         <div class="card-label">الصافي</div>
         <div class="card-value number-fade-in" :class="netValueClass">${{ netAmount }}</div>
         <div class="card-meta">{{ netLabel }}</div>
@@ -57,7 +57,7 @@
     </div>
 
     <div class="dashboard-grid">
-      <div class="card">
+      <div class="card card-gold-hover">
         <h3>الأهداف النشطة</h3>
         <div v-if="!goals.length" class="empty-state">لا توجد أهداف</div>
         <div v-for="goal in topGoals" :key="goal.id" class="goal-item">
@@ -79,7 +79,7 @@
         <router-link to="/goals" class="card-link">عرض كل الأهداف &larr;</router-link>
       </div>
 
-      <div class="card">
+      <div class="card card-gold-hover">
         <h3>آخر سجلات الدوام</h3>
         <div v-if="!allAttendance.length" class="empty-state">لا توجد سجلات دوام</div>
         <div
@@ -280,7 +280,7 @@ onMounted(() => {
 .toggle-btn.active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: white;
 }
 
 .net-positive {
@@ -316,7 +316,7 @@ onMounted(() => {
 }
 
 .goal-item:hover {
-  background: rgba(99, 102, 241, 0.03);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
   margin: 0 -8px;
   padding-left: 8px;
   padding-right: 8px;
@@ -358,7 +358,7 @@ onMounted(() => {
 }
 
 .attendance-item:hover {
-  background: rgba(99, 102, 241, 0.03);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
   margin: 0 -8px;
   padding-left: 8px;
   padding-right: 8px;
@@ -450,7 +450,7 @@ onMounted(() => {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .error-msg {
-  background: rgba(239,68,68,0.1);
+  background: var(--danger-light);
   color: var(--danger);
   border: 1px solid var(--danger);
   padding: 12px 16px;
@@ -459,7 +459,7 @@ onMounted(() => {
   font-weight: 500;
 }
 .success-msg {
-  background: rgba(16,185,129,0.1);
+  background: var(--success-light);
   color: var(--success);
   border: 1px solid var(--success);
   padding: 12px 16px;

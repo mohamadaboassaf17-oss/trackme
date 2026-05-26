@@ -175,6 +175,22 @@ async function handleRegister() {
   background: var(--bg-primary);
   padding: 24px;
   animation: loginFadeIn 0.5s ease-out;
+  position: relative;
+}
+
+.login-view::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.02;
+  background-image: 
+    repeating-linear-gradient(45deg, var(--accent) 0, var(--accent) 1px, transparent 0, transparent 20px),
+    repeating-linear-gradient(-45deg, var(--gold) 0, var(--gold) 1px, transparent 0, transparent 20px);
+  mask-image: radial-gradient(ellipse at 50% 30%, black 35%, transparent 60%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 35%, transparent 60%);
+  animation: arabesqueRotate 90s linear infinite;
 }
 
 @keyframes loginFadeIn {
@@ -191,6 +207,19 @@ async function handleRegister() {
   max-width: 420px;
   box-shadow: var(--shadow-lg);
   animation: cardSlideUp 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to left, var(--accent), var(--gold), var(--accent));
+  border-radius: 3px 0 3px 0;
 }
 
 @keyframes cardSlideUp {
@@ -299,7 +328,7 @@ async function handleRegister() {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .error-msg {
-  background: rgba(239,68,68,0.1);
+  background: var(--danger-light);
   color: var(--danger);
   border: 1px solid var(--danger);
   padding: 12px 16px;
@@ -308,7 +337,7 @@ async function handleRegister() {
   font-weight: 500;
 }
 .success-msg {
-  background: rgba(16,185,129,0.1);
+  background: var(--success-light);
   color: var(--success);
   border: 1px solid var(--success);
   padding: 12px 16px;

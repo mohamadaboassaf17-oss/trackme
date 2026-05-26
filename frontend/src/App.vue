@@ -89,7 +89,7 @@ onMounted(() => {
 
 .theme-toggle-global:hover {
   transform: rotate(15deg) scale(1.1);
-  box-shadow: var(--shadow-md), 0 0 20px rgba(99, 102, 241, 0.15);
+  box-shadow: var(--shadow-md), 0 0 20px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 @media (min-width: 769px) {

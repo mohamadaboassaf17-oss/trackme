@@ -45,7 +45,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.24);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.24), 0 0 0 1px color-mix(in srgb, var(--gold) 20%, transparent);
   min-width: 250px;
   justify-content: center;
   backdrop-filter: blur(8px);

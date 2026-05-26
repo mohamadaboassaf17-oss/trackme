@@ -356,11 +356,11 @@ onMounted(() => {
 
 .badge-gold {
   background-color: var(--warning-light);
-  color: #a16207;
+  color: var(--gold-dark);
 }
 
 [data-theme="dark"] .badge-gold {
-  color: #FBBF24;
+  color: var(--gold);
 }
 
 .goals-grid {
@@ -496,7 +496,7 @@ onMounted(() => {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .error-msg {
-  background: rgba(239,68,68,0.1);
+  background: var(--danger-light);
   color: var(--danger);
   border: 1px solid var(--danger);
   padding: 12px 16px;
@@ -505,7 +505,7 @@ onMounted(() => {
   font-weight: 500;
 }
 .success-msg {
-  background: rgba(16,185,129,0.1);
+  background: var(--success-light);
   color: var(--success);
   border: 1px solid var(--success);
   padding: 12px 16px;

@@ -351,19 +351,19 @@ onMounted(async () => {
   padding: 14px 24px;
   font-size: 1.05rem;
   font-weight: 700;
-  color: #fff;
+  color: white;
   background: var(--accent);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition);
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 .quick-log-btn:hover:not(:disabled) {
   background: var(--accent-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.45);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
 .quick-log-btn:active:not(:disabled) {
@@ -386,13 +386,13 @@ onMounted(async () => {
 .quick-log-msg--success {
   background-color: var(--success-light);
   color: var(--success);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  border: 1px solid color-mix(in srgb, var(--success) 20%, transparent);
 }
 
 .quick-log-msg--warning {
   background-color: var(--warning-light);
   color: var(--warning);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  border: 1px solid color-mix(in srgb, var(--warning) 20%, transparent);
 }
 
 .quick-msg-fade-enter-active {
@@ -467,7 +467,7 @@ onMounted(async () => {
 }
 
 .record-item:hover {
-  background: rgba(99, 102, 241, 0.03);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
   border-color: var(--accent);
 }
 
@@ -552,7 +552,7 @@ onMounted(async () => {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .error-msg {
-  background: rgba(239,68,68,0.1);
+  background: var(--danger-light);
   color: var(--danger);
   border: 1px solid var(--danger);
   padding: 12px 16px;
@@ -561,7 +561,7 @@ onMounted(async () => {
   font-weight: 500;
 }
 .success-msg {
-  background: rgba(16,185,129,0.1);
+  background: var(--success-light);
   color: var(--success);
   border: 1px solid var(--success);
   padding: 12px 16px;

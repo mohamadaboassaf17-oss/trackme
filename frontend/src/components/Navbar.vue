@@ -157,6 +157,8 @@ function handleLogout() {
   background: var(--accent);
   color: white;
   font-weight: 600;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--gold) 30%, transparent);
+  border-bottom: 2px solid var(--gold);
 }
 
 .navbar-actions {
@@ -229,6 +231,22 @@ function handleLogout() {
 .bottom-nav-item.router-link-active {
   color: var(--accent);
   background: var(--accent-light);
+}
+
+.bottom-nav-item.router-link-active .bottom-nav-label {
+  text-shadow: 0 0 8px color-mix(in srgb, var(--gold) 30%, transparent);
+}
+
+.bottom-nav-item.router-link-active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 0 0 2px 2px;
 }
 
 .bottom-nav-icon {

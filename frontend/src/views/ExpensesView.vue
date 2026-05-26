@@ -129,12 +129,12 @@ import { safeArray } from "@/utils/helpers";
 const DEFAULT_CATEGORIES = ["طعام", "إيجار", "مواصلات", "ترفيه", "صحة", "أخرى"];
 
 const CATEGORY_COLORS = {
-  طعام: "#f59e0b",
-  إيجار: "#6366f1",
-  مواصلات: "#06b6d4",
-  ترفيه: "#8b5cf6",
-  صحة: "#10b981",
-  أخرى: "#6b7280",
+  طعام: "#D97706",
+  إيجار: "#0D9488",
+  مواصلات: "#0EA5E9",
+  ترفيه: "#8B5CF6",
+  صحة: "#059669",
+  أخرى: "#78716C",
 };
 
 const expenses = ref([]);
@@ -411,7 +411,7 @@ onMounted(() => {
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #fff;
+  color: white;
 }
 
 .amount-danger {
@@ -442,7 +442,7 @@ onMounted(() => {
 }
 
 .expense-item:hover {
-  background: rgba(99, 102, 241, 0.03);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
   border-color: var(--accent);
 }
 
@@ -500,7 +500,7 @@ onMounted(() => {
 }
 
 .error-msg {
-  background: rgba(239,68,68,0.1);
+  background: var(--danger-light);
   color: var(--danger);
   border: 1px solid var(--danger);
   padding: 12px 16px;
@@ -509,7 +509,7 @@ onMounted(() => {
   font-weight: 500;
 }
 .success-msg {
-  background: rgba(16,185,129,0.1);
+  background: var(--success-light);
   color: var(--success);
   border: 1px solid var(--success);
   padding: 12px 16px;
