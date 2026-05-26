@@ -22,32 +22,36 @@
       </button>
     </div>
 
-    <div v-if="loading" class="loading">جاري التحميل...</div>
+    <div v-if="loading" class="dashboard-skeleton">
+      <div class="skeleton skeleton-card" style="height:130px" v-for="n in 4" :key="'sk'+n"></div>
+      <div class="skeleton skeleton-card" style="height:180px"></div>
+      <div class="skeleton skeleton-card" style="height:180px"></div>
+    </div>
     <div v-if="error" class="error-msg">{{ error }}</div>
 
     <div class="summary-cards summary-grid">
       <div class="card summary-card card-gold-hover">
         <div class="card-label">ساعات العمل</div>
-        <div class="card-value number-fade-in">{{ totalHours }}</div>
+        <div class="card-value value-xl number-fade-in">{{ totalHours }}</div>
         <div class="card-meta">من {{ presentDays }} يوم عمل</div>
       </div>
       <div class="card summary-card card-gold-hover">
         <div class="card-label">الراتب المستحق</div>
-        <div class="card-value number-fade-in">${{ earnedSalary }}</div>
+        <div class="card-value value-xxl number-fade-in">${{ earnedSalary }}</div>
         <div class="card-meta">
           {{ salaryData?.actual_present_days || 0 }} أيام حضور
         </div>
       </div>
       <div class="card summary-card card-gold-hover">
         <div class="card-label">المصاريف</div>
-        <div class="card-value number-fade-in">${{ totalExpenses }}</div>
+        <div class="card-value value-xxl number-fade-in">${{ totalExpenses }}</div>
         <div class="card-meta">
           {{ expensesData?.count || 0 }} معاملة
         </div>
       </div>
       <div class="card summary-card card-gold-hover" :class="netSummaryClass">
         <div class="card-label">الصافي</div>
-        <div class="card-value number-fade-in" :class="netValueClass">${{ netAmount }}</div>
+        <div class="card-value value-xxl number-fade-in" :class="netValueClass">${{ netAmount }}</div>
         <div class="card-meta">{{ netLabel }}</div>
       </div>
     </div>
@@ -59,7 +63,12 @@
     <div class="dashboard-grid">
       <div class="card card-gold-hover">
         <h3>الأهداف النشطة</h3>
-        <div v-if="!goals.length" class="empty-state">لا توجد أهداف</div>
+        <div v-if="!goals.length" class="empty-state-welcome">
+          <div class="empty-icon">🎯</div>
+          <p class="empty-title">لا توجد أهداف حتى الآن</p>
+          <p class="empty-desc">ابدأ بتحديد أهدافك المالية لتتبع تقدمك</p>
+          <router-link to="/goals" class="btn btn-primary">إضافة هدف جديد</router-link>
+        </div>
         <div v-for="goal in topGoals" :key="goal.id" class="goal-item">
           <div class="goal-header">
             <span>{{ goal.name }}</span>
@@ -81,7 +90,12 @@
 
       <div class="card card-gold-hover">
         <h3>آخر سجلات الدوام</h3>
-        <div v-if="!allAttendance.length" class="empty-state">لا توجد سجلات دوام</div>
+        <div v-if="!allAttendance.length" class="empty-state-welcome">
+          <div class="empty-icon">⏰</div>
+          <p class="empty-title">لا توجد سجلات دوام</p>
+          <p class="empty-desc">سجل أول حضور لك اليوم لبدء تتبع وقتك</p>
+          <router-link to="/attendance" class="btn btn-primary">تسجيل الدوام</router-link>
+        </div>
         <div
           v-for="record in lastFiveAttendance"
           :key="record.id"
@@ -112,6 +126,12 @@ import { ref, computed, watch, onMounted } from "vue"
 import { useAuthStore } from "@/stores/auth"
 import api from "@/utils/api"
 import { safeArray } from "@/utils/helpers"
+
+function formatNumber(value) {
+  const num = parseFloat(value)
+  if (isNaN(num)) return '0.00'
+  return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
 
 const authStore = useAuthStore()
 const period = ref("monthly")
@@ -159,17 +179,17 @@ const totalHours = computed(() => {
 const presentDays = computed(() => periodAttendance.value.length)
 
 const earnedSalary = computed(() => {
-  return salaryData.value?.earned_salary?.toFixed(2) || "0.00"
+  return formatNumber(salaryData.value?.earned_salary)
 })
 
 const totalExpenses = computed(() => {
-  return expensesData.value?.total_amount?.toFixed(2) || "0.00"
+  return formatNumber(expensesData.value?.total_amount)
 })
 
 const netAmount = computed(() => {
   const salary = salaryData.value?.earned_salary || 0
   const expenses = expensesData.value?.total_amount || 0
-  return ((salary - expenses) ?? 0).toFixed(2)
+  return formatNumber((salary - expenses))
 })
 
 const netValueClass = computed(() => {
@@ -429,42 +449,46 @@ onMounted(() => {
   }
 }
 
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
+.dashboard-skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+.dashboard-skeleton .skeleton-card {
+  grid-column: auto;
+}
+@media (min-width: 769px) {
+  .dashboard-skeleton .skeleton-card:nth-child(5),
+  .dashboard-skeleton .skeleton-card:nth-child(6) {
+    grid-column: span 1;
+  }
+}
+
+.value-xl { font-size: var(--text-3xl); font-weight: 800; line-height: 1.15; }
+.value-xxl { font-size: var(--text-4xl); font-weight: 800; line-height: 1.1; }
+
+.empty-state-welcome {
+  text-align: center;
+  padding: 32px 16px;
+}
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+.empty-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.empty-desc {
+  font-size: 0.9rem;
   color: var(--text-secondary);
-  gap: 12px;
-}
-
-.spinner {
-  width: 40px; height: 40px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.error-msg {
-  background: var(--danger-light);
-  color: var(--danger);
-  border: 1px solid var(--danger);
-  padding: 12px 16px;
-  border-radius: 10px;
   margin-bottom: 16px;
-  font-weight: 500;
 }
-.success-msg {
-  background: var(--success-light);
-  color: var(--success);
-  border: 1px solid var(--success);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-weight: 500;
+.empty-state-welcome .btn {
+  max-width: 240px;
+  margin: 0 auto;
+  text-decoration: none;
 }
 </style>

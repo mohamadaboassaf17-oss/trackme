@@ -8,6 +8,7 @@
       </div>
 
       <form @submit.prevent="handleLogin" class="login-form">
+        <p class="login-subtitle">مرحباً بعودتك! سجل دخولك للمتابعة</p>
         <div class="form-group">
           <label for="username">اسم المستخدم</label>
           <input id="username" v-model="username" type="text" required placeholder="أدخل اسم المستخدم" />
@@ -94,7 +95,7 @@
             {{ regLoading ? "جاري الإنشاء..." : "إنشاء حساب" }}
           </button>
         </form>
-        <button class="btn-link btn-back" @click="showRegister = false">العودة لتسجيل الدخول</button>
+        <button class="btn-link btn-back" @click="showRegister = false">العودة للدخول</button>
       </div>
     </div>
   </div>
@@ -252,6 +253,14 @@ async function handleRegister() {
   margin-top: 6px;
 }
 
+.login-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
 .login-form {
   margin-bottom: 20px;
 }
@@ -318,7 +327,7 @@ async function handleRegister() {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255,255,255,0.4);
+  border: 2px solid color-mix(in srgb, white 40%, transparent);
   border-top-color: white;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -327,22 +336,4 @@ async function handleRegister() {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.error-msg {
-  background: var(--danger-light);
-  color: var(--danger);
-  border: 1px solid var(--danger);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-weight: 500;
-}
-.success-msg {
-  background: var(--success-light);
-  color: var(--success);
-  border: 1px solid var(--success);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-weight: 500;
-}
 </style>

@@ -11,13 +11,19 @@ from app.routers.auth import get_current_user
 router = APIRouter(prefix="/api", tags=["salary"])
 
 
-def _count_weekdays(start: date, end: date) -> int:
-    """Count work days: Monday through Saturday (Sunday is off)."""
+def _count_weekdays(start: date, end: date, work_days_per_week: int = 6) -> int:
+    """Count work days based on user's work_days_per_week setting.
+    5 = Monday-Friday (weekday < 5)
+    6 = Monday-Saturday (weekday != 6, Sunday off)"""
     count = 0
     current = start
     while current <= end:
-        if current.weekday() != 6:  # 0=Mon ... 6=Sun → all days except Sunday
-            count += 1
+        if work_days_per_week == 5:
+            if current.weekday() < 5:
+                count += 1
+        else:
+            if current.weekday() != 6:
+                count += 1
         current += timedelta(days=1)
     return count
 
@@ -58,7 +64,8 @@ def get_salary(
         period_start = today.replace(day=1)
 
     period_end = today
-    expected_work_days = _count_weekdays(period_start, period_end)
+    wd = current_user.work_days_per_week or 6
+    expected_work_days = _count_weekdays(period_start, period_end, wd)
 
     records = (
         db.query(Attendance)

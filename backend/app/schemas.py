@@ -47,6 +47,7 @@ class UserResponse(BaseModel):
     role: str
     salary_type: str
     salary_amount: float
+    work_days_per_week: Optional[int] = None
     created_at: datetime
     updated_at: datetime
 
@@ -210,3 +211,11 @@ class WealthResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     model_config = {"from_attributes": True}
+
+
+class WorkDaysUpdate(BaseModel):
+    work_days_per_week: int = Field(..., ge=5, le=6, description="Number of work days per week (5 or 6)")
+
+
+class WorkDaysResponse(BaseModel):
+    work_days_per_week: int

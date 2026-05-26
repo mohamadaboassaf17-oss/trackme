@@ -19,6 +19,11 @@ try:
             conn.execute(sql_text("ALTER TABLE users ADD COLUMN email VARCHAR(255) UNIQUE"))
             conn.commit()
             print("Added missing email column to users table")
+    if "work_days_per_week" not in existing_columns:
+        with engine.connect() as conn:
+            conn.execute(sql_text("ALTER TABLE users ADD COLUMN work_days_per_week INTEGER DEFAULT 6"))
+            conn.commit()
+            print("Added missing work_days_per_week column to users table")
 except Exception as e:
     print(f"Migration note: {e}")
 

@@ -24,7 +24,10 @@
     </div>
 
     <div v-if="loading" class="loading">جاري تحميل البيانات...</div>
-    <div v-if="error" class="error-msg">{{ error }}</div>
+    <div v-if="error" class="error-msg">
+      {{ error }}
+      <button class="btn btn-link retry-btn" @click="fetchData()">إعادة المحاولة</button>
+    </div>
 
     <template v-if="!loading && !error">
       <div class="card chart-card">
@@ -38,7 +41,7 @@
                 :style="{ width: incomeBarWidth + '%' }"
               ></div>
             </div>
-            <span class="bar-value">${{ earnedSalary }}</span>
+            <span class="bar-value">${{ formatNumber(earnedSalary) }}</span>
           </div>
           <div class="bar-row">
             <span class="bar-label">المصاريف</span>
@@ -48,7 +51,38 @@
                 :style="{ width: expenseBarWidth + '%' }"
               ></div>
             </div>
-            <span class="bar-value">${{ totalExpenses }}</span>
+            <span class="bar-value">${{ formatNumber(totalExpenses) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card attendance-summary-card">
+        <h3>
+          <span class="chart-icon-bar" aria-hidden="true"></span>
+          ملخص الدوام
+        </h3>
+        <div v-if="attendanceLoading" class="loading-sm">جاري التحميل...</div>
+        <div v-else-if="attendanceError" class="error-msg-sm">{{ attendanceError }}</div>
+        <div v-else class="attendance-stats">
+          <div class="att-stat">
+            <span class="att-stat-value present">{{ attendanceStats.present }}</span>
+            <span class="att-stat-label">حضور</span>
+          </div>
+          <div class="att-stat">
+            <span class="att-stat-value absent">{{ attendanceStats.absent }}</span>
+            <span class="att-stat-label">غياب</span>
+          </div>
+          <div class="att-stat">
+            <span class="att-stat-value holiday">{{ attendanceStats.holiday }}</span>
+            <span class="att-stat-label">إجازة</span>
+          </div>
+          <div class="att-stat">
+            <span class="att-stat-value late">{{ attendanceStats.late }}</span>
+            <span class="att-stat-label">متأخر</span>
+          </div>
+          <div class="att-stat">
+            <span class="att-stat-value hours">{{ attendanceStats.totalHours }}</span>
+            <span class="att-stat-label">ساعة عمل</span>
           </div>
         </div>
       </div>
@@ -66,7 +100,7 @@
                 :style="{ background: conicGradient }"
               ></div>
               <div class="donut-hole">
-                <span class="donut-total">${{ totalExpenses }}</span>
+                <span class="donut-total">${{ formatNumber(totalExpenses) }}</span>
               </div>
             </div>
             <div class="chart-legend">
@@ -81,7 +115,7 @@
                 ></span>
                 <span class="legend-name">{{ entry.name }}</span>
                 <span class="legend-value">
-                  ${{ (entry.amount ?? 0).toFixed(2) }} ({{ entry.percent }}%)
+                  ${{ formatNumber(entry.amount ?? 0) }} ({{ entry.percent }}%)
                 </span>
               </div>
             </div>
@@ -95,8 +129,8 @@
             <div class="goal-info">
               <span class="goal-name">{{ goal.name }}</span>
               <span class="goal-amounts">
-                ${{ (goal.saved_amount ?? 0).toFixed(2) }} /
-                ${{ (goal.target_amount ?? 0).toFixed(2) }}
+                ${{ formatNumber(goal.saved_amount ?? 0) }} /
+                ${{ formatNumber(goal.target_amount ?? 0) }}
               </span>
             </div>
             <div class="goal-bar-row">
@@ -128,6 +162,10 @@ const error = ref("")
 const salaryData = ref(null)
 const expensesData = ref(null)
 const goals = ref([])
+
+const attendanceStats = ref({ present: 0, absent: 0, holiday: 0, late: 0, totalHours: 0 })
+const attendanceLoading = ref(true)
+const attendanceError = ref('')
 
 const categoryColors = {
   طعام: "#D97706",
@@ -224,6 +262,48 @@ function goalColorClass(goal) {
   return "progress-low"
 }
 
+function formatNumber(value) {
+  const num = parseFloat(value)
+  if (isNaN(num)) return '0.00'
+  return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+function getPeriodStart() {
+  const now = new Date()
+  if (period.value === 'weekly') {
+    const day = now.getDay()
+    const start = new Date(now)
+    start.setDate(now.getDate() - day)
+    start.setHours(0, 0, 0, 0)
+    return start.toISOString().split('T')[0]
+  } else {
+    const start = new Date(now.getFullYear(), now.getMonth(), 1)
+    return start.toISOString().split('T')[0]
+  }
+}
+
+async function fetchAttendance() {
+  attendanceLoading.value = true
+  attendanceError.value = ''
+  try {
+    const res = await api.get('/attendance/')
+    const records = safeArray(res.data)
+    const start = getPeriodStart()
+    const periodRecords = records.filter(r => r.date >= start)
+    attendanceStats.value = {
+      present: periodRecords.filter(r => r.status === 'present').length,
+      absent: periodRecords.filter(r => r.status === 'absent').length,
+      holiday: periodRecords.filter(r => r.status === 'holiday').length,
+      late: periodRecords.filter(r => r.status === 'late').length,
+      totalHours: periodRecords.reduce((s, r) => s + (r.hours_worked || 0), 0).toFixed(1)
+    }
+  } catch (e) {
+    attendanceError.value = 'تعذر تحميل بيانات الدوام'
+  } finally {
+    attendanceLoading.value = false
+  }
+}
+
 async function fetchData() {
   loading.value = true
   error.value = ""
@@ -245,10 +325,12 @@ async function fetchData() {
 
 watch(period, () => {
   fetchData()
+  fetchAttendance()
 })
 
 onMounted(() => {
   fetchData()
+  fetchAttendance()
 })
 </script>
 
@@ -329,9 +411,7 @@ onMounted(() => {
   min-width: 0;
 }
 
-.bar-income {
-  background: linear-gradient(135deg, var(--success), color-mix(in srgb, var(--success) 75%, white));
-}
+.bar-income { background: linear-gradient(135deg, var(--success), #34D399); }
 
 .bar-expense {
   background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger) 75%, white));
@@ -492,6 +572,45 @@ onMounted(() => {
   color: var(--text-secondary);
 }
 
+.retry-btn { margin-inline-start: 12px; font-size: 0.85rem; }
+
+.attendance-summary-card {
+  margin-bottom: 20px;
+}
+
+.attendance-summary-card h3 {
+  margin-bottom: 20px;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.attendance-stats {
+  display: flex;
+  gap: 16px;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+.att-stat {
+  text-align: center;
+  min-width: 70px;
+}
+.att-stat-value {
+  display: block;
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.att-stat-value.present { color: var(--success); }
+.att-stat-value.absent { color: var(--danger); }
+.att-stat-value.holiday { color: var(--info); }
+.att-stat-value.late { color: var(--warning); }
+.att-stat-value.hours { color: var(--accent); }
+.att-stat-label {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
 @media (max-width: 768px) {
   .charts-grid {
     grid-template-columns: 1fr;
@@ -524,43 +643,19 @@ onMounted(() => {
     font-size: 0.85rem;
   }
 }
-
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
+.loading-sm {
   color: var(--text-secondary);
-  gap: 12px;
+  padding: 16px 0;
+  text-align: center;
+  font-size: 0.9rem;
 }
 
-.spinner {
-  width: 40px; height: 40px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.error-msg {
+.error-msg-sm {
   background: var(--danger-light);
   color: var(--danger);
-  border: 1px solid var(--danger);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-weight: 500;
-}
-.success-msg {
-  background: var(--success-light);
-  color: var(--success);
-  border: 1px solid var(--success);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-weight: 500;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
 }
 </style>

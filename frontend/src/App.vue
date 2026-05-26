@@ -1,5 +1,5 @@
 <template>
-  <div id="app-root" class="arabesque-bg">
+  <div id="app-root">
     <Navbar v-if="authStore.isAuthenticated" />
     <main class="main-content" :class="{ 'with-navbar': authStore.isAuthenticated }">
       <router-view v-slot="{ Component }">
@@ -89,7 +89,7 @@ onMounted(() => {
 
 .theme-toggle-global:hover {
   transform: rotate(15deg) scale(1.1);
-  box-shadow: var(--shadow-md), 0 0 20px color-mix(in srgb, var(--accent) 15%, transparent);
+  box-shadow: var(--shadow-md), 0 0 20px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 @media (min-width: 769px) {

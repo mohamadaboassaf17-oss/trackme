@@ -6,6 +6,7 @@
     </div>
 
     <div v-if="error" class="error-msg">{{ error }}</div>
+    <div v-if="success" class="record-success">{{ success }}</div>
 
     <div class="attendance-grid">
       <div class="card">
@@ -136,6 +137,7 @@ const form = ref(defaultForm())
 const records = ref([])
 const recordsLoading = ref(false)
 const error = ref('')
+const success = ref('')
 const submitting = ref(false)
 const editingId = ref(null)
 const deleteTarget = ref(null)
@@ -551,16 +553,8 @@ onMounted(async () => {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.error-msg {
-  background: var(--danger-light);
-  color: var(--danger);
-  border: 1px solid var(--danger);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-weight: 500;
-}
-.success-msg {
+.record-success {
+  animation: pulseSuccess 0.4s ease-out;
   background: var(--success-light);
   color: var(--success);
   border: 1px solid var(--success);
@@ -568,5 +562,10 @@ onMounted(async () => {
   border-radius: 10px;
   margin-bottom: 16px;
   font-weight: 500;
+}
+@keyframes pulseSuccess {
+  0% { transform: scale(0.95); opacity: 0.6; }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); opacity: 1; }
 }
 </style>

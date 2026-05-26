@@ -55,6 +55,30 @@
       </div>
 
       <div class="card">
+        <h2>أيام العمل في الأسبوع</h2>
+        <p class="card-desc">اختر عدد أيام العمل لحساب الراتب اليومي</p>
+        <div class="work-days-options">
+          <label class="work-day-option" :class="{ active: workDays === 5 }">
+            <input type="radio" v-model="workDays" :value="5" />
+            <span class="work-day-badge">5</span>
+            <span class="work-day-label">أيام</span>
+            <span class="work-day-detail">الإثنين - الجمعة</span>
+          </label>
+          <label class="work-day-option" :class="{ active: workDays === 6 }">
+            <input type="radio" v-model="workDays" :value="6" />
+            <span class="work-day-badge">6</span>
+            <span class="work-day-label">أيام</span>
+            <span class="work-day-detail">الإثنين - السبت</span>
+          </label>
+        </div>
+        <div v-if="workDaysError" class="error-msg">{{ workDaysError }}</div>
+        <div v-if="workDaysSaved" class="success-msg">{{ workDaysSaved }}</div>
+        <button class="btn btn-primary" @click="saveWorkDays" :disabled="workDaysSaving" style="margin-top:12px">
+          {{ workDaysSaving ? 'جارٍ الحفظ...' : 'حفظ' }}
+        </button>
+      </div>
+
+      <div class="card">
         <h2>ملخص الراتب</h2>
         <div v-if="salaryLoading" class="loading">جارٍ التحميل...</div>
         <div v-else-if="salaryError" class="error-msg">{{ salaryError }}</div>
@@ -129,6 +153,11 @@ const shiftSaving = ref(false);
 const shiftSaveError = ref("");
 const shiftSaveSuccess = ref("");
 
+const workDays = ref(6)
+const workDaysSaving = ref(false)
+const workDaysError = ref('')
+const workDaysSaved = ref('')
+
 onMounted(() => {
   if (authStore.user) {
     salaryType.value = authStore.user.salary_type || "monthly";
@@ -136,6 +165,7 @@ onMounted(() => {
   }
   fetchSalary();
   fetchShiftDefaults();
+  fetchWorkDays();
 });
 
 async function saveSalary() {
@@ -209,6 +239,27 @@ async function saveShiftDefaults() {
       err.response?.data?.detail || "حدث خطأ أثناء حفظ إعدادات وقت الدوام";
   } finally {
     shiftSaving.value = false;
+  }
+}
+
+async function fetchWorkDays() {
+  try {
+    const res = await api.get('/settings/work-days')
+    workDays.value = res.data.work_days_per_week || 6
+  } catch (e) { /* silent */ }
+}
+
+async function saveWorkDays() {
+  workDaysError.value = ''
+  workDaysSaved.value = ''
+  workDaysSaving.value = true
+  try {
+    await api.put('/settings/work-days', { work_days_per_week: workDays.value })
+    workDaysSaved.value = 'تم حفظ إعدادات أيام العمل'
+  } catch (e) {
+    workDaysError.value = e.response?.data?.detail || 'حدث خطأ'
+  } finally {
+    workDaysSaving.value = false
   }
 }
 </script>
@@ -304,22 +355,35 @@ h2 {
   margin: 8px 0;
 }
 
-.error-msg {
-  background: var(--danger-light);
-  color: var(--danger);
-  border: 1px solid var(--danger);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-weight: 500;
+.work-days-options {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
 }
-.success-msg {
-  background: var(--success-light);
-  color: var(--success);
-  border: 1px solid var(--success);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-weight: 500;
+.work-day-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 12px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: center;
 }
+.work-day-option.active {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.work-day-option input { display: none; }
+.work-day-badge {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  color: var(--accent);
+}
+.work-day-label { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
+.work-day-detail { font-size: var(--text-xs); color: var(--text-secondary); }
+.card-desc { font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: 16px; }
 </style>

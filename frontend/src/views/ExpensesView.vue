@@ -499,22 +499,4 @@ onMounted(() => {
   }
 }
 
-.error-msg {
-  background: var(--danger-light);
-  color: var(--danger);
-  border: 1px solid var(--danger);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-weight: 500;
-}
-.success-msg {
-  background: var(--success-light);
-  color: var(--success);
-  border: 1px solid var(--success);
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-weight: 500;
-}
 </style>
