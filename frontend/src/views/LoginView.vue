@@ -54,6 +54,25 @@
         </button>
       </form>
 
+      <!-- Google Sign-In Divider -->
+      <div class="oauth-divider">
+        <span class="oauth-divider-text">أو سجل دخول عبر</span>
+      </div>
+
+      <!-- Google Sign-In Button -->
+      <div class="google-btn-wrapper">
+        <div id="googleSignInBtn" class="google-signin-btn" @click="triggerGoogleLogin">
+          <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          <span>تسجيل الدخول عبر Google</span>
+        </div>
+        <div id="googleCredentialError" class="google-credential-error" v-if="googleError" style="display: none;">{{ googleError }}</div>
+      </div>
+
       <p class="switch-mode">
         ليس لديك حساب؟
         <button class="btn-link" @click="showRegister = true">إنشاء حساب جديد</button>
@@ -113,7 +132,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
@@ -132,6 +151,8 @@ const regSalaryType = ref("monthly");
 const regSalaryAmount = ref(0);
 const regError = ref("");
 const regLoading = ref(false);
+const googleError = ref("");
+const googleLoading = ref(false);
 
 const showPassword = ref(false);
 const showRegPassword = ref(false);
@@ -176,6 +197,83 @@ async function handleRegister() {
     regLoading.value = false;
   }
 }
+
+// ===== Google OAuth =====
+function initializeGoogleSignIn() {
+  if (!window.google || !window.google.accounts) {
+    console.warn("Google Identity Services not loaded yet");
+    return;
+  }
+
+  window.google.accounts.id.initialize({
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
+    callback: handleGoogleCredentialResponse,
+    auto_select: false,
+    cancel_on_tap_outside: true,
+  });
+}
+
+function triggerGoogleLogin() {
+  if (!window.google || !window.google.accounts) {
+    googleError.value = "خدمة Google غير متوفرة حالياً - تحقق من اتصالك بالإنترنت";
+    return;
+  }
+
+  googleError.value = "";
+  googleLoading.value = true;
+
+  try {
+    window.google.accounts.id.prompt((notification) => {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        googleLoading.value = false;
+        window.google.accounts.id.renderButton(
+          document.getElementById("googleSignInBtn"),
+          { theme: "outline", size: "large", text: "signin_with", shape: "pill", width: 280 }
+        );
+      }
+    });
+  } catch (e) {
+    googleError.value = "حدث خطأ أثناء محاولة تسجيل الدخول عبر Google";
+    googleLoading.value = false;
+  }
+}
+
+async function handleGoogleCredentialResponse(response) {
+  googleError.value = "";
+  googleLoading.value = true;
+
+  try {
+    await authStore.googleLogin(response.credential);
+    router.push("/dashboard");
+  } catch (err) {
+    const detail = err.response?.data?.detail || err.message || "";
+    googleError.value = detail || "فشل تسجيل الدخول عبر Google - حاول مرة أخرى";
+  } finally {
+    googleLoading.value = false;
+  }
+}
+
+let googleInitAttempt = null;
+
+onMounted(() => {
+  try {
+    initializeGoogleSignIn();
+  } catch (e) {
+    // script not loaded yet
+  }
+
+  googleInitAttempt = setTimeout(() => {
+    try {
+      initializeGoogleSignIn();
+    } catch (e) {
+      // Google script still loading
+    }
+  }, 1500);
+});
+
+onUnmounted(() => {
+  if (googleInitAttempt) clearTimeout(googleInitAttempt);
+});
 </script>
 
 <style scoped>
@@ -421,4 +519,77 @@ async function handleRegister() {
   vertical-align: middle;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Google OAuth Styles */
+.oauth-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0 18px;
+}
+
+.oauth-divider::before,
+.oauth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.oauth-divider-text {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.google-btn-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.google-signin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 20px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.google-signin-btn:hover {
+  border-color: #4285F4;
+  background: color-mix(in srgb, #4285F4 5%, var(--bg-primary));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.15);
+}
+
+.google-signin-btn:active {
+  transform: translateY(0);
+}
+
+.google-icon {
+  flex-shrink: 0;
+}
+
+.google-credential-error {
+  color: var(--danger);
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 6px;
+}
 </style>

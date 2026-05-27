@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -5,12 +6,13 @@ from slowapi.util import get_remote_address
 
 from app.database import get_db
 from app.models import User
-from app.schemas import UserCreate, UserLogin, UserResponse, Token
+from app.schemas import UserCreate, UserLogin, UserResponse, Token, GoogleAuthRequest
 from app.utils.auth import (
     verify_password,
     get_password_hash,
     create_access_token,
     verify_token,
+    verify_google_token,
 )
 from app.utils.limiter import limiter
 
@@ -73,6 +75,74 @@ def register(request: Request, user_data: UserCreate, db: Session = Depends(get_
     db.commit()
     db.refresh(new_user)
     return new_user
+
+
+@router.post("/google", response_model=Token)
+@limiter.limit("10/minute")
+def google_login(request: Request, google_data: GoogleAuthRequest, db: Session = Depends(get_db)):
+    """Authenticate user via Google ID token. Creates account if first time."""
+    idinfo = verify_google_token(google_data.credential)
+    if not idinfo:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="فشل التحقق من حساب Google - الرجاء المحاولة مرة أخرى",
+        )
+
+    google_id = idinfo.get("sub")
+    email = idinfo.get("email", "")
+    name = idinfo.get("name", "")
+    picture = idinfo.get("picture", "")
+
+    if not google_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="بيانات حساب Google غير مكتملة",
+        )
+
+    user = db.query(User).filter(User.oauth_id == google_id).first()
+
+    if not user and email:
+        user = db.query(User).filter(User.email == email).first()
+        if user:
+            user.oauth_provider = "google"
+            user.oauth_id = google_id
+            if picture and not user.avatar_url:
+                user.avatar_url = picture
+            db.commit()
+            db.refresh(user)
+
+    if not user:
+        base_username = email.split("@")[0] if email else name.replace(" ", "_").lower()
+        username = base_username
+        counter = 1
+        while db.query(User).filter(User.username == username).first():
+            username = f"{base_username}{counter}"
+            counter += 1
+
+        random_password = get_password_hash(os.urandom(24).hex())
+
+        new_user = User(
+            username=username,
+            email=email,
+            password_hash=random_password,
+            role="employee",
+            oauth_provider="google",
+            oauth_id=google_id,
+            avatar_url=picture,
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        user = new_user
+
+    token = create_access_token(
+        {
+            "sub": str(user.id),
+            "username": user.username,
+            "role": user.role,
+        }
+    )
+    return {"access_token": token, "token_type": "bearer"}
 
 
 @router.post("/login", response_model=Token)

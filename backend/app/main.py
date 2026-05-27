@@ -24,6 +24,21 @@ try:
             conn.execute(sql_text("ALTER TABLE users ADD COLUMN work_days_per_week INTEGER DEFAULT 6"))
             conn.commit()
             print("Added missing work_days_per_week column to users table")
+    if "oauth_provider" not in existing_columns:
+        with engine.connect() as conn:
+            conn.execute(sql_text("ALTER TABLE users ADD COLUMN oauth_provider VARCHAR(50)"))
+            conn.commit()
+            print("Added missing oauth_provider column to users table")
+    if "oauth_id" not in existing_columns:
+        with engine.connect() as conn:
+            conn.execute(sql_text("ALTER TABLE users ADD COLUMN oauth_id VARCHAR(255)"))
+            conn.commit()
+            print("Added missing oauth_id column to users table")
+    if "avatar_url" not in existing_columns:
+        with engine.connect() as conn:
+            conn.execute(sql_text("ALTER TABLE users ADD COLUMN avatar_url VARCHAR(500)"))
+            conn.commit()
+            print("Added missing avatar_url column to users table")
 except Exception as e:
     print(f"Migration note: {e}")
 

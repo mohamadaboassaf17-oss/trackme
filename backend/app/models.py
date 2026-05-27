@@ -13,7 +13,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(100), unique=True, index=True, nullable=False)
     email = Column(String(255), unique=True, nullable=True)
-    password_hash = Column(String(255), nullable=False)
+    password_hash = Column(String(255), nullable=True)
     role = Column(String(20), default="employee")
     salary_type = Column(String(20), default="monthly")
     salary_amount = Column(Float, default=0.0)
@@ -22,6 +22,9 @@ class User(Base):
     default_end_time = Column(Time, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    oauth_provider = Column(String(50), nullable=True)
+    oauth_id = Column(String(255), nullable=True)
+    avatar_url = Column(String(500), nullable=True)
 
 
 class Attendance(Base):

@@ -41,13 +41,20 @@ class UserLogin(BaseModel):
     password: str
 
 
+class GoogleAuthRequest(BaseModel):
+    credential: str  # Google ID token from frontend
+
+
 class UserResponse(BaseModel):
     id: int
     username: str
+    email: Optional[str] = None
     role: str
     salary_type: str
     salary_amount: float
     work_days_per_week: Optional[int] = None
+    oauth_provider: Optional[str] = None
+    avatar_url: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 

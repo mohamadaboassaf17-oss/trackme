@@ -38,3 +38,35 @@ def verify_token(token: str) -> dict | None:
         return payload
     except JWTError:
         return None
+
+
+def verify_google_token(id_token: str) -> dict | None:
+    """Verify a Google-issued ID token and return the payload if valid."""
+    try:
+        from google.oauth2 import id_token
+        from google.auth.transport import requests as google_requests
+
+        client_id = os.getenv("GOOGLE_CLIENT_ID", "")
+        if not client_id:
+            print("ERROR: GOOGLE_CLIENT_ID not set in environment")
+            return None
+
+        idinfo = id_token.verify_oauth2_token(
+            id_token,
+            google_requests.Request(),
+            client_id,
+            clock_skew_in_seconds=60,
+        )
+
+        if idinfo.get("iss") not in ["accounts.google.com", "https://accounts.google.com"]:
+            print(f"ERROR: Invalid issuer: {idinfo.get('iss')}")
+            return None
+
+        return idinfo
+
+    except ValueError as e:
+        print(f"Google token verification failed: {e}")
+        return None
+    except Exception as e:
+        print(f"Unexpected error during Google token verification: {e}")
+        return None

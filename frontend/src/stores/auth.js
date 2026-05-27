@@ -69,6 +69,27 @@ export const useAuthStore = defineStore("auth", {
       return response.data;
     },
 
+    async googleLogin(credential) {
+      const response = await api.post("/auth/google", { credential });
+      const data = response.data;
+
+      if (typeof data === "string" && data.trim().startsWith("<")) {
+        throw new Error("Received HTML instead of JSON — check baseURL configuration");
+      }
+
+      if (!data || typeof data !== "object") {
+        throw new Error("Invalid server response");
+      }
+
+      if (!data.access_token || typeof data.access_token !== "string") {
+        throw new Error("No valid token received");
+      }
+
+      this.token = data.access_token;
+      localStorage.setItem("token", this.token);
+      await this.fetchUser();
+    },
+
     async fetchUser() {
       try {
         const response = await api.get("/auth/me");
