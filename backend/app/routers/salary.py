@@ -65,7 +65,10 @@ def get_salary(
 
     period_end = today
     wd = current_user.work_days_per_week or 6
-    expected_work_days = _count_weekdays(period_start, period_end, wd)
+    expected_work_days = max(
+        _count_weekdays(period_start, period_end, wd),
+        current_user.expected_days_per_month or 26
+    )
 
     records = (
         db.query(Attendance)

@@ -78,6 +78,35 @@
         </button>
       </div>
 
+      <!-- Expected Work Days Per Month -->
+      <div class="card card-settings">
+        <div class="card-header">
+          <h3>أيام العمل المتوقعة شهرياً</h3>
+          <p class="card-desc">الحد الأدنى لأيام العمل المتوقعة لحساب الراتب الشهري</p>
+        </div>
+        <div class="expected-days-input">
+          <input
+            id="expectedDays"
+            v-model.number="expectedDays"
+            type="number"
+            min="26"
+            max="31"
+            class="input-number"
+            placeholder="26"
+          />
+          <span class="expected-days-unit">يوم في الشهر</span>
+        </div>
+        <button
+          class="btn btn-save"
+          :disabled="savingExpectedDays"
+          @click="saveExpectedDays"
+        >
+          {{ savingExpectedDays ? 'جاري الحفظ...' : 'حفظ' }}
+        </button>
+        <p v-if="expectedDaysError" class="error-msg">{{ expectedDaysError }}</p>
+        <p v-if="expectedDaysSuccess" class="success-msg">{{ expectedDaysSuccess }}</p>
+      </div>
+
       <div class="card">
         <h2>ملخص الراتب</h2>
         <div v-if="salaryLoading" class="loading">جارٍ التحميل...</div>
@@ -158,6 +187,11 @@ const workDaysSaving = ref(false)
 const workDaysError = ref('')
 const workDaysSaved = ref('')
 
+const expectedDays = ref(26);
+const savingExpectedDays = ref(false);
+const expectedDaysError = ref("");
+const expectedDaysSuccess = ref("");
+
 onMounted(() => {
   if (authStore.user) {
     salaryType.value = authStore.user.salary_type || "monthly";
@@ -166,6 +200,7 @@ onMounted(() => {
   fetchSalary();
   fetchShiftDefaults();
   fetchWorkDays();
+  fetchExpectedDays();
 });
 
 async function saveSalary() {
@@ -260,6 +295,31 @@ async function saveWorkDays() {
     workDaysError.value = e.response?.data?.detail || 'حدث خطأ'
   } finally {
     workDaysSaving.value = false
+  }
+}
+
+async function fetchExpectedDays() {
+  try {
+    const res = await api.get("/settings/expected-days");
+    expectedDays.value = res.data.expected_days_per_month || 26;
+  } catch {
+    expectedDays.value = 26;
+  }
+}
+
+async function saveExpectedDays() {
+  expectedDaysError.value = "";
+  expectedDaysSuccess.value = "";
+  savingExpectedDays.value = true;
+  try {
+    await api.put("/settings/expected-days", {
+      expected_days_per_month: expectedDays.value
+    });
+    expectedDaysSuccess.value = "تم حفظ الإعدادات بنجاح";
+  } catch (err) {
+    expectedDaysError.value = err.response?.data?.detail || "حدث خطأ أثناء الحفظ";
+  } finally {
+    savingExpectedDays.value = false;
   }
 }
 </script>
@@ -386,4 +446,57 @@ h2 {
 .work-day-label { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); }
 .work-day-detail { font-size: var(--text-xs); color: var(--text-secondary); }
 .card-desc { font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: 16px; }
+
+.expected-days-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 16px;
+}
+.input-number {
+  width: 90px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  transition: var(--transition);
+}
+.input-number:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.expected-days-unit {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.btn-save {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px 32px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: var(--transition);
+}
+.btn-save:hover {
+  background: var(--accent-hover);
+}
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.success-msg {
+  color: var(--success);
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
 </style>

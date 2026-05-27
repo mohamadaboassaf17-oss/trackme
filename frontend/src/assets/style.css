@@ -6,9 +6,9 @@
   --text-primary: #1C1610; /* Deep warm espresso — darker for readability */
   --text-secondary: #5C4D3D; /* Warm brown — clearer contrast */
   --text-muted: #A09080; /* Sand/taupe on white */
-  --accent: #C2410C; /* Rich Terracotta */
-  --accent-hover: #9A3412;
-  --accent-light: #FEF1E7; /* More visible accent tint */
+  --accent: #D97706; /* Rich Terracotta */
+  --accent-hover: #B45309;
+  --accent-light: #FEF3C7; /* More visible accent tint */
   --gold: #C2893A; /* Arabian Gold */
   --gold-light: #FDF5E6; /* More visible gold tint */
   --gold-dark: #8F5E1E;
@@ -54,9 +54,9 @@
   --text-primary: #F7F2EB; /* Soft warm cream */
   --text-secondary: #B2A190; /* Soft warm sand/grey */
   --text-muted: #7D6B5C; /* Warm clay/charcoal */
-  --accent: #F97316; /* Sophisticated Sunset Terracotta Orange */
-  --accent-hover: #FB923C; /* Warm glowing amber orange */
-  --accent-light: rgba(249, 115, 22, 0.12);
+  --accent: #F59E0B; /* Sophisticated Sunset Terracotta Orange */
+  --accent-hover: #FBBF24; /* Warm glowing amber orange */
+  --accent-light: rgba(245, 158, 11, 0.12);
   --gold: #D4A060; /* Brilliant warm sand-gold */
   --gold-light: rgba(212, 160, 96, 0.10);
   --gold-dark: #A2753C;

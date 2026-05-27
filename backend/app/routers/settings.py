@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import User
-from app.schemas import ShiftDefaultsUpdate, ShiftDefaultsResponse, WorkDaysUpdate, WorkDaysResponse
+from app.schemas import ShiftDefaultsUpdate, ShiftDefaultsResponse, WorkDaysUpdate, WorkDaysResponse, ExpectedDaysUpdate, ExpectedDaysResponse
 from app.routers.auth import get_current_user
 
 router = APIRouter(prefix="/api/settings", tags=["settings"])
@@ -67,3 +67,23 @@ def get_work_days(
     current_user: User = Depends(get_current_user),
 ):
     return WorkDaysResponse(work_days_per_week=current_user.work_days_per_week or 6)
+
+
+@router.put("/expected-days", response_model=ExpectedDaysResponse)
+def update_expected_days(
+    data: ExpectedDaysUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    current_user.expected_days_per_month = data.expected_days_per_month
+    db.commit()
+    db.refresh(current_user)
+    return ExpectedDaysResponse(expected_days_per_month=current_user.expected_days_per_month or 26)
+
+
+@router.get("/expected-days", response_model=ExpectedDaysResponse)
+def get_expected_days(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return ExpectedDaysResponse(expected_days_per_month=current_user.expected_days_per_month or 26)

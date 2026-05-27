@@ -52,6 +52,11 @@
         <span class="bottom-nav-icon nav-icon-settings" aria-hidden="true"></span>
         <span class="bottom-nav-label">إعدادات</span>
       </router-link>
+      <button class="bottom-nav-item bottom-nav-theme" @click="toggleTheme" :aria-label="theme === 'dark' ? 'الوضع النهاري' : 'الوضع الليلي'">
+        <span v-if="theme === 'dark'" class="bottom-nav-icon theme-icon-sun" aria-hidden="true"></span>
+        <span v-else class="bottom-nav-icon theme-icon-moon" aria-hidden="true"></span>
+        <span class="bottom-nav-label">مظهر</span>
+      </button>
     </nav>
 </template>
 
@@ -287,6 +292,17 @@ function handleLogout() {
 
 .bottom-nav-label {
   font-weight: 600;
+}
+
+.bottom-nav-theme {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.bottom-nav-theme:hover .bottom-nav-icon,
+.bottom-nav-theme:focus-visible .bottom-nav-icon {
+  color: var(--gold);
 }
 
 @media (max-width: 768px) {

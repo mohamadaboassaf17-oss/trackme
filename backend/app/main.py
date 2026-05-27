@@ -34,6 +34,11 @@ try:
             conn.execute(sql_text("ALTER TABLE users ADD COLUMN oauth_id VARCHAR(255)"))
             conn.commit()
             print("Added missing oauth_id column to users table")
+    if "expected_days_per_month" not in existing_columns:
+        with engine.connect() as conn:
+            conn.execute(sql_text("ALTER TABLE users ADD COLUMN expected_days_per_month INTEGER DEFAULT 26"))
+            conn.commit()
+            print("Added missing expected_days_per_month column to users table")
     if "avatar_url" not in existing_columns:
         with engine.connect() as conn:
             conn.execute(sql_text("ALTER TABLE users ADD COLUMN avatar_url VARCHAR(500)"))

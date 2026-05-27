@@ -16,15 +16,6 @@
       </router-view>
       <ToastNotification ref="toast" />
     </main>
-    <button
-      class="theme-toggle-global glow-pulse"
-      @click="toggleTheme"
-      :aria-label="theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'"
-      :title="theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'"
-    >
-      <span v-if="theme === 'dark'" class="theme-icon-sun" aria-hidden="true"></span>
-      <span v-else class="theme-icon-moon" aria-hidden="true"></span>
-    </button>
   </div>
 </template>
 
@@ -56,12 +47,6 @@ function applyTheme(t) {
   document.documentElement.setAttribute("data-theme", t);
 }
 
-function toggleTheme() {
-  theme.value = theme.value === "dark" ? "light" : "dark";
-  applyTheme(theme.value);
-  localStorage.setItem("theme", theme.value);
-}
-
 onMounted(() => {
   const saved = localStorage.getItem("theme") || "dark";
   theme.value = saved;
@@ -73,36 +58,6 @@ onMounted(() => {
 <style>
 .main-content.with-navbar {
   padding-top: 60px;
-}
-
-.theme-toggle-global {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 200;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  font-size: 1.3rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition);
-  box-shadow: var(--shadow);
-}
-
-.theme-toggle-global:hover {
-  transform: rotate(15deg) scale(1.1);
-  box-shadow: var(--shadow-md), 0 0 20px color-mix(in srgb, var(--accent) 30%, transparent);
-}
-
-@media (min-width: 769px) {
-  .main-content.with-navbar ~ .theme-toggle-global {
-    display: none;
-  }
 }
 
 @media (max-width: 768px) {
@@ -197,12 +152,4 @@ onMounted(() => {
   z-index: 1;
 }
 
-.theme-toggle-global.glow-pulse {
-  animation: toggleGlow 3s ease-in-out infinite;
-}
-
-@keyframes toggleGlow {
-  0%, 100% { box-shadow: var(--shadow), 0 0 8px color-mix(in srgb, var(--accent) 15%, transparent); }
-  50%      { box-shadow: var(--shadow-md), 0 0 20px color-mix(in srgb, var(--accent) 30%, transparent); }
-}
 </style>

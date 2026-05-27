@@ -53,6 +53,7 @@ class UserResponse(BaseModel):
     salary_type: str
     salary_amount: float
     work_days_per_week: Optional[int] = None
+    expected_days_per_month: Optional[int] = None
     oauth_provider: Optional[str] = None
     avatar_url: Optional[str] = None
     created_at: datetime
@@ -226,3 +227,11 @@ class WorkDaysUpdate(BaseModel):
 
 class WorkDaysResponse(BaseModel):
     work_days_per_week: int
+
+
+class ExpectedDaysUpdate(BaseModel):
+    expected_days_per_month: int = Field(..., ge=26, le=31, description="Expected work days per month (26-31)")
+
+
+class ExpectedDaysResponse(BaseModel):
+    expected_days_per_month: int

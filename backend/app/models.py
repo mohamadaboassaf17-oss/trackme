@@ -18,6 +18,7 @@ class User(Base):
     salary_type = Column(String(20), default="monthly")
     salary_amount = Column(Float, default=0.0)
     work_days_per_week = Column(Integer, default=6)
+    expected_days_per_month = Column(Integer, default=26)
     default_start_time = Column(Time, nullable=True)
     default_end_time = Column(Time, nullable=True)
     created_at = Column(DateTime, server_default=func.now())

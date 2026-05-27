@@ -1,5 +1,5 @@
 # TrackMe PWA Icon Generator
-# Generates 192x192 and 512x512 PNG icons using pure Python (no dependencies)
+# Generates 192x192, 512x512, and 180x180 PNG icons using pure Python (no dependencies)
 # Run: python generate_icons.py
 
 import struct
@@ -8,7 +8,7 @@ import os
 
 
 def create_png(width, height, filepath):
-    """Create a simple PNG icon: indigo circle with white T"""
+    """Create a simple PNG icon: gold circle with white T"""
 
     def make_pixel(x, y):
         """Return (R, G, B, A) for pixel at (x, y)"""
@@ -19,11 +19,11 @@ def create_png(width, height, filepath):
         dx, dy = x - cx, y - cy
         dist = (dx * dx + dy * dy) ** 0.5
 
-        # Background (transparent)
+        # Background
         if dist > radius + 2:
-            return (0x0F, 0x17, 0x2A, 255)  # dark bg
+            return (0x1A, 0x15, 0x11, 255)  # warm dark brown bg (#1A1511)
         elif dist > radius:
-            return (0x63, 0x66, 0xF1, 255)  # indigo ring (anti-alias)
+            return (0xC2, 0x89, 0x3A, 255)  # gold ring (anti-alias, #C2893A)
         else:
             # Inside circle — check if pixel is on the "T" letter
             bar_top = height * 0.28
@@ -42,8 +42,12 @@ def create_png(width, height, filepath):
             if stem_top <= y <= stem_bottom and stem_left <= x <= stem_right:
                 return (255, 255, 255, 255)
 
-            # Circle fill
-            return (0x63, 0x66, 0xF1, 255)
+            # Circle fill — gold gradient (vertical, top darker, bottom lighter)
+            gradient_factor = y / height
+            r = int(0xC2 + (0xD4 - 0xC2) * gradient_factor)
+            g = int(0x89 + (0xA0 - 0x89) * gradient_factor)
+            b = int(0x3A + (0x60 - 0x3A) * gradient_factor)
+            return (r, g, b, 255)
 
     # ── Build raw pixel data ──
     raw_data = b""
@@ -80,10 +84,11 @@ def create_png(width, height, filepath):
 
 
 if __name__ == "__main__":
-    public_dir = os.path.join(os.path.dirname(__file__), "..", "frontend", "public")
+    public_dir = os.path.join(os.path.dirname(__file__), "frontend", "public")
     os.makedirs(public_dir, exist_ok=True)
 
-    print("Generating PWA icons...")
+    print("Generating PWA icons with Gold theme...")
     create_png(192, 192, os.path.join(public_dir, "icon-192.png"))
     create_png(512, 512, os.path.join(public_dir, "icon-512.png"))
+    create_png(180, 180, os.path.join(public_dir, "apple-touch-icon.png"))
     print("Done! Icons ready in frontend/public/")
