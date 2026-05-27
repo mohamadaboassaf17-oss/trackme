@@ -499,4 +499,47 @@ onMounted(() => {
   }
 }
 
+/* === Phase 4 — Expenses Visual Improvements === */
+
+.expense-item {
+  border-right: 3px solid transparent;
+  transition: all var(--transition);
+}
+.expense-item:hover {
+  border-right-color: var(--danger);
+}
+
+.summary-card-compact {
+  position: relative;
+}
+.summary-card-compact::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to left, var(--accent), var(--gold));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  opacity: 0.5;
+}
+
+.badge {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  font-size: 0.7rem;
+  padding: 3px 12px;
+}
+
+.summary-total .amount-danger {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.card h2,
+.card h3 {
+  border-bottom: 2px solid;
+  border-image: linear-gradient(to left, var(--accent), var(--gold), transparent) 1;
+  padding-bottom: 12px;
+}
+
 </style>

@@ -658,4 +658,53 @@ onMounted(() => {
   font-size: 0.85rem;
   margin-bottom: 8px;
 }
+
+/* === Phase 3 Visual Enhancements === */
+
+/* Stagger entrance for charts */
+.charts-grid,
+.attendance-stats {
+  animation: none;
+}
+.charts-grid > * {
+  opacity: 0;
+  animation: fadeSlideIn 0.5s ease-out forwards;
+}
+.charts-grid > *:nth-child(1) { animation-delay: 0.05s; }
+.charts-grid > *:nth-child(2) { animation-delay: 0.15s; }
+
+/* Attendance stat blocks with accent borders */
+.att-stat {
+  position: relative;
+  padding: 12px 8px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-primary) 60%, transparent);
+  transition: all var(--transition);
+  border: 1px solid var(--border-light);
+}
+.att-stat:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+.att-stat-value {
+  margin-bottom: 2px;
+}
+
+/* Chart card gold top accent */
+.chart-card { position: relative; }
+.chart-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to left, var(--accent), var(--gold));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  opacity: 0.6;
+}
+
+/* Enhanced progress fills with gold shimmer */
+.progress-high { background: linear-gradient(90deg, var(--success), var(--gold)); }
 </style>

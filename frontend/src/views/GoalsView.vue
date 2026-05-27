@@ -356,11 +356,7 @@ onMounted(() => {
 
 .badge-gold {
   background-color: var(--warning-light);
-  color: var(--gold-dark);
-}
-
-[data-theme="dark"] .badge-gold {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .goals-grid {

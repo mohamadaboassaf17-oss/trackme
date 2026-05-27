@@ -1,9 +1,20 @@
 <template>
   <div class="login-view">
+    <!-- Atmospheric background layers -->
+    <div class="login-atmosphere" aria-hidden="true">
+      <div class="login-glow"></div>
+      <div class="login-particles">
+        <span class="login-particle" v-for="n in 8" :key="'lp'+n" :style="{ '--lp': n }"></span>
+      </div>
+    </div>
+
+    <!-- Main card -->
     <div class="login-card">
       <div class="login-brand">
-        <span class="brand-icon" aria-hidden="true"></span>
-        <h1>TrackMe | تتبع</h1>
+        <div class="brand-icon-wrapper">
+          <span class="brand-icon" aria-hidden="true"></span>
+        </div>
+        <h1 class="heading-gold">TrackMe | تتبع</h1>
         <p class="subtitle">نظام تتبع الحضور والمصاريف</p>
       </div>
 
@@ -168,6 +179,8 @@ async function handleRegister() {
 </script>
 
 <style scoped>
+/* === Login View — Premium Immersive Experience === */
+
 .login-view {
   display: flex;
   align-items: center;
@@ -175,43 +188,90 @@ async function handleRegister() {
   min-height: 100vh;
   background: var(--bg-primary);
   padding: 24px;
-  animation: loginFadeIn 0.5s ease-out;
-  position: relative;
-}
-
-.login-view::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.02;
-  background-image: 
-    repeating-linear-gradient(45deg, var(--accent) 0, var(--accent) 1px, transparent 0, transparent 20px),
-    repeating-linear-gradient(-45deg, var(--gold) 0, var(--gold) 1px, transparent 0, transparent 20px);
-  mask-image: radial-gradient(ellipse at 50% 30%, black 35%, transparent 60%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 35%, transparent 60%);
-  animation: arabesqueRotate 90s linear infinite;
-}
-
-@keyframes loginFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.login-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 40px 36px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: var(--shadow-lg);
-  animation: cardSlideUp 0.5s ease-out;
   position: relative;
   overflow: hidden;
 }
 
+/* Atmospheric layers */
+.login-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.login-glow {
+  position: absolute;
+  top: -15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70vw;
+  height: 50vh;
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 10%, transparent) 0%, transparent 70%);
+  animation: loginGlowPulse 6s ease-in-out infinite;
+}
+
+[data-theme="dark"] .login-glow {
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 70%);
+}
+
+@keyframes loginGlowPulse {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+  50%      { opacity: 1; transform: translateX(-50%) scale(1.05); }
+}
+
+/* Floating particles */
+.login-particles {
+  position: absolute;
+  inset: 0;
+}
+
+.login-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0;
+  animation: loginParticleFloat calc(7s + var(--lp) * 2s) ease-in-out infinite;
+  animation-delay: calc(var(--lp) * 0.8s);
+  left: calc(5% + var(--lp) * 12%);
+  top: calc(10% + var(--lp) * 8%);
+}
+
+[data-theme="dark"] .login-particle {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+@keyframes loginParticleFloat {
+  0%   { opacity: 0; transform: translateY(0) translateX(0); }
+  20%  { opacity: 0.5; }
+  50%  { opacity: 0.3; transform: translateY(-40px) translateX(15px); }
+  80%  { opacity: 0.1; }
+  100% { opacity: 0; transform: translateY(-80px) translateX(-5px); }
+}
+
+/* Login Card */
+.login-card {
+  position: relative;
+  z-index: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 44px 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shadow-lg), 0 0 0 1px color-mix(in srgb, var(--accent) 6%, transparent);
+  animation: cardSlideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  backdrop-filter: blur(2px);
+}
+
+[data-theme="dark"] .login-card {
+  box-shadow: var(--shadow-lg), 0 0 40px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+/* Top gradient accent bar */
 .login-card::before {
   content: '';
   position: absolute;
@@ -219,32 +279,50 @@ async function handleRegister() {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(to left, var(--accent), var(--gold), var(--accent));
+  background: linear-gradient(to left, var(--accent), #E6A817, var(--accent));
   border-radius: 3px 0 3px 0;
 }
 
 @keyframes cardSlideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+/* Brand Section */
 .login-brand {
   text-align: center;
   margin-bottom: 32px;
 }
 
+.brand-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--accent) 5%, transparent));
+  border: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
+  margin-bottom: 16px;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
 .brand-icon {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: var(--accent);
   display: block;
-  margin-bottom: 8px;
+  filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--accent) 25%, transparent));
 }
 
 .login-brand h1 {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
+  margin-bottom: 6px;
 }
 
 .subtitle {
@@ -257,7 +335,7 @@ async function handleRegister() {
   color: var(--text-secondary);
   font-size: 0.9rem;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   font-weight: 500;
 }
 
@@ -265,16 +343,21 @@ async function handleRegister() {
   margin-bottom: 20px;
 }
 
+/* Button */
 .btn-login {
   margin-top: 8px;
 }
 
+/* Switch mode */
 .switch-mode {
   text-align: center;
   color: var(--text-secondary);
   font-size: 0.9rem;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
 }
 
+/* Registration Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -284,10 +367,10 @@ async function handleRegister() {
   align-items: center;
   justify-content: center;
   z-index: 200;
-  animation: fadeOverlayIn 0.2s ease-out;
+  animation: modalFadeIn 0.25s ease-out;
 }
 
-@keyframes fadeOverlayIn {
+@keyframes modalFadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
@@ -304,6 +387,7 @@ async function handleRegister() {
   font-size: 0.9rem;
 }
 
+/* Form helpers - keep existing */
 .input-wrapper { position: relative; }
 .toggle-password-btn {
   position: absolute;
@@ -323,6 +407,8 @@ async function handleRegister() {
   display: block;
 }
 .btn-full { width: 100%; }
+
+/* Spinner */
 .btn-spinner {
   display: inline-block;
   width: 16px;
@@ -335,5 +421,4 @@ async function handleRegister() {
   vertical-align: middle;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-
 </style>

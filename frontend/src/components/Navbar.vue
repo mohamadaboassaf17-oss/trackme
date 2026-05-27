@@ -94,13 +94,25 @@ function handleLogout() {
   left: 0;
   right: 0;
   height: 60px;
-  background: color-mix(in srgb, var(--bg-card) 88%, transparent);
+  background: color-mix(in srgb, var(--bg-card) 75%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid transparent;
+  position: relative;
   z-index: 100;
   display: flex;
   align-items: center;
+}
+
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to left, transparent, var(--gold), var(--accent), var(--gold), transparent);
+  opacity: 0.6;
 }
 
 .navbar-inner {
@@ -119,9 +131,11 @@ function handleLogout() {
   gap: 8px;
   font-size: 1.2rem;
   font-weight: 800;
-  color: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-decoration: none;
-  letter-spacing: -0.02em;
   transition: opacity var(--transition);
 }
 
@@ -154,11 +168,24 @@ function handleLogout() {
 }
 
 .navbar-links a.router-link-active {
-  background: var(--accent);
-  color: white;
-  font-weight: 600;
-  box-shadow: 0 0 12px color-mix(in srgb, var(--gold) 30%, transparent);
-  border-bottom: 2px solid var(--gold);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-weight: 700;
+  box-shadow: none;
+  border-bottom: none;
+  position: relative;
+}
+
+.navbar-links a.router-link-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 10%;
+  width: 80%;
+  height: 2.5px;
+  background: linear-gradient(to left, var(--accent), var(--gold));
+  border-radius: 2px;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
 .navbar-actions {
@@ -227,14 +254,20 @@ function handleLogout() {
   min-height: 44px;
 }
 
-.bottom-nav-item:hover,
-.bottom-nav-item.router-link-active {
+.bottom-nav-item:hover {
   color: var(--accent);
   background: var(--accent-light);
 }
 
+.bottom-nav-item.router-link-active {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
 .bottom-nav-item.router-link-active .bottom-nav-label {
-  text-shadow: 0 0 8px color-mix(in srgb, var(--gold) 30%, transparent);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 .bottom-nav-item.router-link-active::after {
@@ -245,7 +278,7 @@ function handleLogout() {
   transform: translateX(-50%);
   width: 20px;
   height: 2px;
-  background: var(--gold);
+  background: var(--accent);
   border-radius: 0 0 2px 2px;
 }
 

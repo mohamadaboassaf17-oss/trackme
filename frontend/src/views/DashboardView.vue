@@ -29,27 +29,27 @@
     </div>
     <div v-if="error" class="error-msg">{{ error }}</div>
 
-    <div class="summary-cards summary-grid">
-      <div class="card summary-card card-gold-hover">
+    <div class="summary-cards summary-grid stagger-children">
+      <div class="card summary-card">
         <div class="card-label">ساعات العمل</div>
         <div class="card-value value-xl number-fade-in">{{ totalHours }}</div>
         <div class="card-meta">من {{ presentDays }} يوم عمل</div>
       </div>
-      <div class="card summary-card card-gold-hover">
+      <div class="card summary-card">
         <div class="card-label">الراتب المستحق</div>
         <div class="card-value value-xxl number-fade-in">${{ earnedSalary }}</div>
         <div class="card-meta">
           {{ salaryData?.actual_present_days || 0 }} أيام حضور
         </div>
       </div>
-      <div class="card summary-card card-gold-hover">
+      <div class="card summary-card">
         <div class="card-label">المصاريف</div>
         <div class="card-value value-xxl number-fade-in">${{ totalExpenses }}</div>
         <div class="card-meta">
           {{ expensesData?.count || 0 }} معاملة
         </div>
       </div>
-      <div class="card summary-card card-gold-hover" :class="netSummaryClass">
+      <div class="card summary-card" :class="netSummaryClass">
         <div class="card-label">الصافي</div>
         <div class="card-value value-xxl number-fade-in" :class="netValueClass">${{ netAmount }}</div>
         <div class="card-meta">{{ netLabel }}</div>
@@ -61,10 +61,15 @@
     </div>
 
     <div class="dashboard-grid">
-      <div class="card card-gold-hover">
+      <div class="card">
         <h3>الأهداف النشطة</h3>
         <div v-if="!goals.length" class="empty-state-welcome">
-          <div class="empty-icon">🎯</div>
+          <div class="empty-illustration empty-illustration-target" aria-hidden="true">
+            <span class="ei-ring"></span>
+            <span class="ei-ring ei-ring-2"></span>
+            <span class="ei-ring ei-ring-3"></span>
+            <span class="ei-dot"></span>
+          </div>
           <p class="empty-title">لا توجد أهداف حتى الآن</p>
           <p class="empty-desc">ابدأ بتحديد أهدافك المالية لتتبع تقدمك</p>
           <router-link to="/goals" class="btn btn-primary">إضافة هدف جديد</router-link>
@@ -88,10 +93,14 @@
         <router-link to="/goals" class="card-link">عرض كل الأهداف &larr;</router-link>
       </div>
 
-      <div class="card card-gold-hover">
+      <div class="card">
         <h3>آخر سجلات الدوام</h3>
         <div v-if="!allAttendance.length" class="empty-state-welcome">
-          <div class="empty-icon">⏰</div>
+          <div class="empty-illustration empty-illustration-clock" aria-hidden="true">
+            <span class="ei-clock-body"></span>
+            <span class="ei-clock-hand"></span>
+            <span class="ei-clock-dot"></span>
+          </div>
           <p class="empty-title">لا توجد سجلات دوام</p>
           <p class="empty-desc">سجل أول حضور لك اليوم لبدء تتبع وقتك</p>
           <router-link to="/attendance" class="btn btn-primary">تسجيل الدوام</router-link>
@@ -491,4 +500,88 @@ onMounted(() => {
   margin: 0 auto;
   text-decoration: none;
 }
+
+/* === CSS-only Empty State Illustrations === */
+.empty-illustration {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  position: relative;
+}
+
+/* Target icon (goals) */
+.empty-illustration-target .ei-ring {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: targetPulse 2s ease-in-out infinite;
+}
+.empty-illustration-target .ei-ring-2 {
+  width: 44px;
+  height: 44px;
+  animation-delay: 0.3s;
+  opacity: 0.3;
+}
+.empty-illustration-target .ei-ring-3 {
+  width: 28px;
+  height: 28px;
+  animation-delay: 0.6s;
+  opacity: 0.4;
+}
+.empty-illustration-target .ei-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0.6;
+}
+@keyframes targetPulse {
+  0%, 100% { transform: scale(1); opacity: 0.2; }
+  50% { transform: scale(1.08); opacity: 0.4; }
+}
+
+/* Clock icon (attendance) */
+.empty-illustration-clock .ei-clock-body {
+  width: 56px;
+  height: 56px;
+  border: 2.5px solid var(--accent);
+  border-radius: 50%;
+  position: absolute;
+  opacity: 0.35;
+}
+.empty-illustration-clock .ei-clock-hand {
+  position: absolute;
+  width: 2px;
+  height: 18px;
+  background: var(--accent);
+  border-radius: 2px;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: bottom center;
+  animation: clockSweep 3s ease-in-out infinite;
+  opacity: 0.5;
+}
+.empty-illustration-clock .ei-clock-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0.6;
+}
+@keyframes clockSweep {
+  0% { transform: translateX(-50%) rotate(0deg); }
+  100% { transform: translateX(-50%) rotate(360deg); }
+}
+
+/* Remove the old .empty-icon styles */
+.empty-icon { display: none; }
 </style>

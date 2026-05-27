@@ -332,7 +332,7 @@ h2 {
 }
 
 .summary-value.holiday {
-  color: var(--holiday);
+  color: var(--info);
 }
 
 .earned-row {

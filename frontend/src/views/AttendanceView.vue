@@ -568,4 +568,38 @@ onMounted(async () => {
   50% { transform: scale(1.03); }
   100% { transform: scale(1); opacity: 1; }
 }
+
+/* === Phase 4 — Attendance Improvements === */
+
+/* Record items: gold accent border on hover */
+.record-item {
+  border-right: 3px solid transparent;
+  transition: all var(--transition);
+}
+.record-item:hover {
+  border-right-color: var(--accent);
+}
+
+/* Quick log button: gold gradient variant */
+.quick-log-btn {
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.quick-log-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--accent-hover), var(--gold-dark));
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* Hours display: warmer style */
+.hours-display {
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  color: var(--gold-dark);
+  border: 1px solid color-mix(in srgb, var(--gold) 20%, transparent);
+}
+
+/* Card headers with gold underline accent */
+.card h2 {
+  border-bottom: 2px solid;
+  border-image: linear-gradient(to left, var(--accent), var(--gold), transparent) 1;
+}
 </style>
