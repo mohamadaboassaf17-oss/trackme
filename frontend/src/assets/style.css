@@ -1,30 +1,30 @@
 /* === Light Mode (Default) === */
 :root {
-  --bg-primary: #FAF7F2; /* Warm ivory/cream */
-  --bg-secondary: #FFFDFB; /* Elegant warm off-white */
-  --bg-card: #FFFDFB;
-  --text-primary: #2A221A; /* Deep warm charcoal/espresso */
-  --text-secondary: #6B5743; /* Soft terracotta-tinted brown */
-  --text-muted: #9E866E; /* Sand/taupe */
+  --bg-primary: #F4EFE6; /* Warm ivory/cream — cleaner contrast with cards */
+  --bg-secondary: #FCF8F2; /* Warm off-white */
+  --bg-card: #FFFFFF; /* Pure white — clear differentiation from background */
+  --text-primary: #1C1610; /* Deep warm espresso — darker for readability */
+  --text-secondary: #5C4D3D; /* Warm brown — clearer contrast */
+  --text-muted: #A09080; /* Sand/taupe on white */
   --accent: #C2410C; /* Rich Terracotta */
   --accent-hover: #9A3412;
-  --accent-light: #FDF4E9;
+  --accent-light: #FEF1E7; /* More visible accent tint */
   --gold: #C2893A; /* Arabian Gold */
-  --gold-light: #FDF9F2;
+  --gold-light: #FDF5E6; /* More visible gold tint */
   --gold-dark: #8F5E1E;
   --success: #15803D;
-  --success-light: #F0FDF4;
+  --success-light: #E8F5E9; /* Clearer green tint */
   --warning: #B45309;
-  --warning-light: #FEF3C7;
+  --warning-light: #FFF3E0; /* Clearer amber tint */
   --danger: #B91C1C;
-  --danger-light: #FEF2F2;
+  --danger-light: #FDE8E8; /* Clearer red tint */
   --info: #0369A1;
-  --info-light: #F0F9FF;
-  --border: #E8DFC8; /* Warm sand/gold outline */
-  --border-light: #F3EFE0;
-  --shadow: 0 2px 6px rgba(42, 34, 26, 0.04);
-  --shadow-md: 0 8px 24px rgba(42, 34, 26, 0.06);
-  --shadow-lg: 0 16px 40px rgba(42, 34, 26, 0.09);
+  --info-light: #E3F2FD; /* Clearer blue tint */
+  --border: #D9CEBA; /* Darker warm border — clearly visible on white bg */
+  --border-light: #E6DDCC;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.09);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -515,15 +515,15 @@ label {
 
 .status-present {
   background-color: var(--success-light);
-  color: #047857;
+  color: #065F46;
 }
 .status-absent {
   background-color: var(--danger-light);
-  color: #B5452A;
+  color: #991B1B;
 }
 .status-holiday {
   background-color: var(--info-light);
-  color: #0A5C5F;
+  color: #1E40AF;
 }
 .status-late {
   background-color: var(--warning-light);
@@ -535,11 +535,11 @@ label {
   color: var(--success);
 }
 [data-theme="dark"] .status-absent {
-  background-color: rgba(245, 153, 122, 0.15);
+  background-color: rgba(248, 113, 113, 0.15);
   color: var(--danger);
 }
 [data-theme="dark"] .status-holiday {
-  background-color: rgba(94, 234, 212, 0.15);
+  background-color: rgba(56, 189, 248, 0.15);
   color: var(--info);
 }
 [data-theme="dark"] .status-late {
