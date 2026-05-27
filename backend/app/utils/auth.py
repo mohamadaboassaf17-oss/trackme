@@ -40,21 +40,22 @@ def verify_token(token: str) -> dict | None:
         return None
 
 
-def verify_google_token(id_token: str) -> dict | None:
+def verify_google_token(token: str) -> dict | None:
     """Verify a Google-issued ID token and return the payload if valid."""
+    # Strip quotes/whitespace that may be introduced by Render's env var paste
+    raw_client_id = (os.getenv("GOOGLE_CLIENT_ID") or "").strip().strip('"').strip("'")
+    if not raw_client_id:
+        print("ERROR: GOOGLE_CLIENT_ID not set in environment")
+        return None
+
     try:
         from google.oauth2 import id_token
         from google.auth.transport import requests as google_requests
 
-        client_id = os.getenv("GOOGLE_CLIENT_ID", "")
-        if not client_id:
-            print("ERROR: GOOGLE_CLIENT_ID not set in environment")
-            return None
-
         idinfo = id_token.verify_oauth2_token(
-            id_token,
+            token,
             google_requests.Request(),
-            client_id,
+            raw_client_id,
             clock_skew_in_seconds=60,
         )
 
@@ -65,7 +66,9 @@ def verify_google_token(id_token: str) -> dict | None:
         return idinfo
 
     except ValueError as e:
-        print(f"Google token verification failed: {e}")
+        prefix = raw_client_id[:10] if raw_client_id else "N/A"
+        suffix = raw_client_id[-10:] if raw_client_id and len(raw_client_id) > 10 else "N/A"
+        print(f"Google token verification failed: {e} | client_id: {prefix}...{suffix}")
         return None
     except Exception as e:
         print(f"Unexpected error during Google token verification: {e}")

@@ -70,7 +70,7 @@
           </svg>
           <span>تسجيل الدخول عبر Google</span>
         </div>
-        <div id="googleCredentialError" class="google-credential-error" v-if="googleError" style="display: none;">{{ googleError }}</div>
+        <div v-if="googleError" class="google-credential-error">{{ googleError }}</div>
       </div>
 
       <p class="switch-mode">
@@ -132,7 +132,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
@@ -199,12 +199,23 @@ async function handleRegister() {
 }
 
 // ===== Google OAuth =====
-function initializeGoogleSignIn() {
-  if (!window.google || !window.google.accounts) {
-    console.warn("Google Identity Services not loaded yet");
-    return;
-  }
+function loadGoogleScript() {
+  return new Promise((resolve, reject) => {
+    if (window.google && window.google.accounts) {
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error("فشل تحميل خدمة Google"));
+    document.body.appendChild(script);
+  });
+}
 
+function initializeGoogleSignIn() {
   window.google.accounts.id.initialize({
     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
     callback: handleGoogleCredentialResponse,
@@ -253,26 +264,13 @@ async function handleGoogleCredentialResponse(response) {
   }
 }
 
-let googleInitAttempt = null;
-
-onMounted(() => {
+onMounted(async () => {
   try {
+    await loadGoogleScript();
     initializeGoogleSignIn();
   } catch (e) {
-    // script not loaded yet
+    googleError.value = e.message || "فشل تحميل خدمة Google";
   }
-
-  googleInitAttempt = setTimeout(() => {
-    try {
-      initializeGoogleSignIn();
-    } catch (e) {
-      // Google script still loading
-    }
-  }, 1500);
-});
-
-onUnmounted(() => {
-  if (googleInitAttempt) clearTimeout(googleInitAttempt);
 });
 </script>
 
